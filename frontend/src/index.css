@@ -1,0 +1,76 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+
+a {
+  text-decoration: none;
+}
+
+.currency-type-tag {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  text-transform: capitalize;
+  background: #5b8aff;
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+  border-radius: 50%;
+}
+
+.ctp-stats-table td {
+  vertical-align: middle;
+}
+
+.currency-price-details {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+.currency-price-percent {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.currency-details-list {
+  max-width: 500px;
+}
+
+.currency-details-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ctp-graph-container {
+  height: 400px;
+  position: relative;
+}
+
+.ctp-graph-container .loading-container{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  background: #ffffff9e;
+  padding-top: 200px
+}
