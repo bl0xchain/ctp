@@ -18,7 +18,7 @@ app.use('/api/currencies', require('./routes/currencyRoutes'))
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/import', require('./routes/importRoutes'))
 
-app.use('/api/twitter', cors({ origin: process.env.TWITTER_CORS_ORIGIN }), require('./routes/twitterRoutes'))
+app.use('/api/twitter', cors({ origin: 'https://beta.spad.finance' }), require('./routes/twitterRoutes'))
 
 // serve frontend
 if(process.env.NODE_ENV === 'production') {
