@@ -16,8 +16,28 @@ const getCurrencyStatsByGroup = asyncHandler( async (req, res) => {
         } else {
             currencies_stats = await Stats.find({ batch: batch._id }).populate('currency').exec()
         }
+        let total_freefloat = 0;
+        currencies_stats.map(currency => {
+            total_freefloat += Number(currency.ff_mcap)
+        })
         
-        res.status(200).json({batch, currencies:currencies_stats.sort(function(a, b) {
+        updated_currency_stats = [];
+        currencies_stats.map(currency => {
+            updated_currency_stats.push({
+                id: currency.currency._id,
+                name: currency.currency.name,
+                symbol: currency.currency.symbol,
+                image: currency.currency.image,
+                category: currency.currency.category,
+                market_cap: currency.market_cap,
+                price: currency.price,
+                price_change_24h: currency.price_change_percentage_24h,
+                weight: (currency.ff_mcap / total_freefloat * 100)
+            })
+        })
+
+
+        res.status(200).json({batch, currencies:updated_currency_stats.sort(function(a, b) {
             return b.market_cap - a.market_cap;
         })})
     } catch (error) {
@@ -117,27 +137,29 @@ const getCTPStatsHistory = asyncHandler( async (req, res) => {
 } )
 
 const calculateCTPForBatch = asyncHandler(async(batch_id) => {
+    console.log('inside ')
     if(!batch_id) {
         return false
     }
+    console.log(batch_id)
     try {
         const stats = await Stats.find({ batch: batch_id }).populate('currency').exec()
         let ctp_value_10 = 0, total_price_10 = 0, total_volume_10 = 0, ctp_value_50 = 0, total_price_50 = 0, total_volume_50 = 0
         stats.map(async(stat, i) => {
-            ctp_value_50 += Number(stat.free_float)
+            ctp_value_50 += Number(stat.free_float * stat.price)
             total_price_50 += Number(stat.price)
             total_volume_50 += Number(stat.volume)
             if(stat.currency.ctp_group === 'CTP10') {
-                ctp_value_10 += Number(stat.free_float)
+                ctp_value_10 += Number(stat.free_float * stat.price)
                 total_price_10 += Number(stat.price)
                 total_volume_10 += Number(stat.volume)
             }
         })
         const updatedBatch = await Batch.findByIdAndUpdate(batch_id, {
-            ctp_value_10: (ctp_value_10 / 7000000), 
+            ctp_value_10: (ctp_value_10 / 35000000),
             total_price_10: total_price_10,
             total_volume_10: total_volume_10,
-            ctp_value_50: (ctp_value_50 / 7000000), 
+            ctp_value_50: (ctp_value_50 / 35000000), 
             total_price_50: total_price_50,
             total_volume_50: total_volume_50
         })

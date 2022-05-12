@@ -4,7 +4,7 @@ import axios from 'axios';
 import NumberFormat from "react-number-format";
 import { Link } from "react-router-dom";
 import Moment from 'react-moment';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LabelList } from 'recharts';
 import format from 'number-format.js'
 
 const Home = () => {
@@ -15,6 +15,10 @@ const Home = () => {
     const [duration, setDuration] = useState(14)
     const [loading, setLoading] = useState(false)
     const [ctpStatsLoading, setCtpStatsLoading] = useState(false)
+    const [ctp24Change10, setCtp24Change10] = useState('')
+    const [ctp24Change50, setCtp24Change50] = useState('')
+    const [currencyComposition, setCurrencyComposition] = useState(null)
+    const [ctpComposition, setCtpComposition] = useState(null)
 
     const formatPrice = (price) => {
         return format( "$#,###.##", price );
@@ -32,6 +36,8 @@ const Home = () => {
         return new Date(label).toLocaleString()
     }
 
+    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+
     useEffect(() => {
         const fetchStats = async () => {
             setLoading(true)
@@ -39,6 +45,40 @@ const Home = () => {
             if(response.data) {
                 setBatch(response.data.batch)
                 setCurrencyStats(response.data.currencies)
+                let currency_stats = {
+                    Other: {
+                        name: 'Other',
+                        value: 0
+                    }
+                }
+                let ctp_composition = {
+                    C: {
+                        name: 'C',
+                        value: 0
+                    },
+                    T: {
+                        name: 'T',
+                        value: 0
+                    },
+                    P: {
+                        name: 'P',
+                        value: 0
+                    }
+                }
+                response.data.currencies.forEach(currency => {
+                    if(currency.weight > 5) {
+                        currency_stats[currency.name] = {
+                            name: currency.name,
+                            value: Math.round(currency.weight * 100) / 100
+                        }
+                    } else {
+                        currency_stats['Other'].value = Math.round(currency_stats['Other'].value * 100) / 100 + Math.round(currency.weight * 100) / 100
+                    }
+                    ctp_composition[currency.category].value = ctp_composition[currency.category].value + Math.round(currency.weight * 100) / 100
+                })
+                
+                setCurrencyComposition(Object.values(currency_stats))
+                setCtpComposition(Object.values(ctp_composition))
             }
             setLoading(false)
         }
@@ -51,6 +91,13 @@ const Home = () => {
             const ctpResponse = await axios.get('api/currencies/ctp-stats/', {params: {duration: duration}})
             if(ctpResponse.data) {
                 setCtpStats(ctpResponse.data)
+                const ctp24ago = (ctpResponse.data.length > 24) ? ctpResponse.data[ctpResponse.data.length - 25] : ctpResponse.data[0];
+                const ctp24now = ctpResponse.data[ctpResponse.data.length - 1];
+                const diff50 = ctp24now.ctp_value_50 - ctp24ago.ctp_value_50
+                setCtp24Change50(diff50 / ctp24ago.ctp_value_50 * 100)
+                const diff10 = ctp24now.ctp_value_10 - ctp24ago.ctp_value_10
+                setCtp24Change10(diff10 / ctp24ago.ctp_value_10 * 100)
+                
             }
             setCtpStatsLoading(false)
         }
@@ -60,7 +107,7 @@ const Home = () => {
     return (
         <Container>
             <div className="text-center">
-                <Form className="ctp-group mb-5 fw-bold fs-4">
+                <Form className="ctp-group mb-2 fw-bold fs-4 text-secondary">
                     <Form.Check 
                         inline
                         label="CTP10"
@@ -90,31 +137,33 @@ const Home = () => {
                             batch ? 
                             <Row className="mb-5">
                                 <Col sm="4">
-                                    <h2>PRICE</h2>
-                                    <h3>
-                                        <NumberFormat 
-                                            value={ctpGroup === 'CTP10' ? batch.total_price_10 : batch.total_price_50} 
-                                            displayType={'text'} thousandSeparator={true} prefix={'$'} 
-                                            decimalScale="2" decimalSeparator="." />
-                                    </h3>
+                                    
                                 </Col>
                                 <Col sm="4">
-                                    <h2>CTP Value</h2>
-                                    <h3>
+                                    <h5 className="text-secondary">Index Value</h5>
+                                    <h2 className="fs-1">
                                         <NumberFormat 
                                             value={ctpGroup === 'CTP10' ? batch.ctp_value_10 : batch.ctp_value_50} 
-                                            displayType={'text'} thousandSeparator={true} prefix={''} 
-                                            decimalScale="2" decimalSeparator="." />
-                                    </h3>
-                                </Col>
-                                <Col sm="4">
-                                    <h2>VOLUME</h2>
-                                    <h3>
-                                        <NumberFormat 
-                                            value={ctpGroup === 'CTP10' ? batch.total_volume_10 : batch.total_volume_50} 
                                             displayType={'text'} thousandSeparator={true} prefix={'$'} 
                                             decimalScale="2" decimalSeparator="." />
-                                    </h3>
+                                    </h2>
+                                    {
+                                        ctpGroup === 'CTP10'?
+                                        <h5 className={ctp24Change10 > 0 ? 'text-success' : 'text-danger'}>
+                                        (<NumberFormat
+                                            value={ctp24Change10} displayType={'text'}
+                                            decimalScale="2" decimalSeparator="." suffix={'%'}/>)
+                                        </h5>:
+                                        <h5 className={ctp24Change50 > 0 ? 'text-success' : 'text-danger'}>
+                                        (<NumberFormat
+                                            value={ctp24Change50} displayType={'text'}
+                                            decimalScale="2" decimalSeparator="." suffix={'%'}/>)
+                                        </h5>
+                                    }
+                                    
+                                </Col>
+                                <Col sm="4">
+                                    
                                 </Col>
                                 <Col sm="12" className="mb-5 ctp-graph-container">
                                     <ButtonToolbar aria-label="Duration Selection" className="mb-2 mt-5">
@@ -166,34 +215,35 @@ const Home = () => {
                         {
                             currencyStats &&
                             <div className="mb-5">
-                                <Table responsive striped className="ctp-stats-table">
+                                <Table responsive className="ctp-stats-table mb-5">
                                     <thead>
                                         <tr>
-                                            <th width="62"></th>
-                                            <th></th>
-                                            <th>Currency</th>
+                                            <th className="text-start">Currency Name</th>
+                                            <th>Classification</th>
+                                            <th>weight</th>
                                             <th>Market Cap</th>
                                             <th>Price</th>
-                                            <th>Free Float</th>
-                                            <th>Volume</th>
-                                            <th>Price Change</th>
+                                            <th className="text-end">Price Change</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                     {
                                         currencyStats.map(currency => (
                                             <tr key={currency._id}>
-                                                <td>
-                                                    <img alt="logo" className="currency-logo" src={currency.currency.image} width="25"/>
-                                                </td>
-                                                <td>
-                                                    <span className="currency-type-tag">{currency.currency.category}</span>
-                                                </td>
-                                                <td>
-                                                    <Link to={"/currency/"+currency.currency._id}>
-                                                        {currency.currency.name} <br/>
-                                                        <small className="text-muted text-uppercase">{currency.currency.symbol}</small>
+                                                <td className="text-start">
+                                                    <Link to={"/currency/"+currency.id}>
+                                                        <img alt="logo" className="currency-logo" src={currency.image} width="25"/> {" "}
+                                                        <span className="currency-name">{currency.name}</span> {" "}
+                                                        <small className="text-muted text-uppercase">{currency.symbol}</small>
                                                     </Link>
+                                                </td>
+                                                <td>
+                                                    <span className="currency-type-tag">{currency.category}</span>
+                                                </td>
+                                                <td>
+                                                    <NumberFormat value={currency.weight} displayType={'text'}
+                                                        thousandSeparator={true} decimalScale="2"
+                                                        decimalSeparator="." suffix={'%'} />
                                                 </td>
                                                 <td>
                                                     <NumberFormat value={currency.market_cap} displayType={'text'}
@@ -205,20 +255,10 @@ const Home = () => {
                                                         thousandSeparator={true} prefix={'$'} decimalScale="2"
                                                         decimalSeparator="."/>
                                                 </td>
-                                                <td>
-                                                    <NumberFormat value={currency.free_float} displayType={'text'}
-                                                        thousandSeparator={true} decimalScale="2"
-                                                        decimalSeparator="."/>
-                                                </td>
-                                                <td>
-                                                    <NumberFormat value={currency.volume} displayType={'text'}
-                                                        thousandSeparator={true} prefix={'$'} decimalScale="2"
-                                                        decimalSeparator="."/>
-                                                </td>
-                                                <td>
+                                                <td className="text-end">
                                                     <NumberFormat
-                                                        className={currency.price_change_percentage_24h > 0 ? 'text-success' : 'text-danger'}
-                                                        value={currency.price_change_percentage_24h} displayType={'text'}
+                                                        className={currency.price_change_24h > 0 ? 'text-success' : 'text-danger'}
+                                                        value={currency.price_change_24h} displayType={'text'}
                                                         decimalScale="2" decimalSeparator="." suffix={'%'}/>
                                                 </td>
                                             </tr>
@@ -226,8 +266,67 @@ const Home = () => {
                                     }
                                     </tbody>
                                 </Table>
-                                
+
+                                <div className="mb-5">
+                                    <Button size="lg" disabled className="rounded-pill">
+                                        COMING SOON
+                                    </Button>
+                                </div>
+
                                 <Row>
+                                    <Col sm="6" style={{height: '350px'}}>
+                                        <h4>CTP COMPOSITION</h4>
+                                        {
+                                            ctpComposition && 
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <PieChart width={400} height={400}>
+                                                    <Pie
+                                                        data={ctpComposition}
+                                                        cx="50%"
+                                                        cy="50%"
+                                                        labelLine={false}
+                                                        outerRadius={120}
+                                                        fill="#8884d8"
+                                                        dataKey="value"
+                                                        label
+                                                    >
+                                                        {ctpComposition.map((entry, index) => (
+                                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                        ))}
+                                                        <LabelList dataKey="name" position="insideTop" angle="0"  />
+                                                    </Pie>
+                                                    <Tooltip />
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                        }
+                                        
+                                    </Col>
+                                    <Col sm="6" style={{height: '350px'}}>
+                                        <h4>PORTFOLIO COMPOSITION</h4>
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart width={400} height={400}>
+                                                <Pie
+                                                    dataKey="value"
+                                                    data={currencyComposition}
+                                                    cx="50%"
+                                                    cy="50%"
+                                                    labelLine={false}
+                                                    outerRadius={120}
+                                                    fill="#5b8aff"
+                                                    label
+                                                >
+                                                    {currencyComposition.map((entry, index) => (
+                                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                        ))}
+                                                        <LabelList dataKey="name" position="insideTop" angle="0"  />
+                                                </Pie>
+                                                <Tooltip />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    </Col>
+                                </Row>
+                                
+                                <Row className="mt-5">
                                     <Col className="text-start">
                                         Updated on : {" "}
                                         { batch && 

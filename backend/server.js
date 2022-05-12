@@ -4,6 +4,7 @@ const colors = require('colors')
 const dotenv = require("dotenv").config();
 const { errorHandler } = require('./middleware/errorMiddleware')
 const connectDB = require('./config/db')
+const cors = require('cors')
 const port = process.env.PORT || 5000;
 
 connectDB()
@@ -16,6 +17,8 @@ app.use(express.urlencoded({ extended: false }))
 app.use('/api/currencies', require('./routes/currencyRoutes'))
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/import', require('./routes/importRoutes'))
+
+app.use('/api/twitter', cors({ origin: process.env.TWITTER_CORS_ORIGIN }), require('./routes/twitterRoutes'))
 
 // serve frontend
 if(process.env.NODE_ENV === 'production') {

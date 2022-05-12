@@ -106,13 +106,19 @@ const importBatches = asyncHandler(async(req, res) => {
 
 const calculateCTP = asyncHandler(async(req, res) => {
     try {
-        const batches = await Batch.find().exec()
+        const batches = await Batch.find({ //query today up to tonight
+            created: {
+                $gte: new Date('2022-05-11'), 
+            }
+        })
+        console.log(batches.length)
         let status = {status: 'Empty'}
         batches.map(async (batch, i) => {
             calculateCTPForBatch(batch._id)
         })
         res.status(200).json(status)
     } catch (error) {
+        console.log(error.message)
         res.status(400)
         throw new Error('Problem with calculating CTP')
     }
