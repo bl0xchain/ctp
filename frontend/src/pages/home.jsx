@@ -302,27 +302,32 @@ const Home = () => {
                                         
                                     </Col>
                                     <Col sm="6" style={{height: '350px'}}>
-                                        <h4>PORTFOLIO COMPOSITION</h4>
-                                        <ResponsiveContainer width="100%" height="100%">
-                                            <PieChart width={400} height={400}>
-                                                <Pie
-                                                    dataKey="value"
-                                                    data={currencyComposition}
-                                                    cx="50%"
-                                                    cy="50%"
-                                                    labelLine={false}
-                                                    outerRadius={120}
-                                                    fill="#5b8aff"
-                                                    label
-                                                >
-                                                    {currencyComposition.map((entry, index) => (
-                                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                                        ))}
-                                                        <LabelList dataKey="name" position="insideTop" angle="0"  />
-                                                </Pie>
-                                                <Tooltip />
-                                            </PieChart>
-                                        </ResponsiveContainer>
+                                        { currencyComposition && 
+                                        <>
+                                            <h4>PORTFOLIO COMPOSITION</h4>
+                                            <ResponsiveContainer width="100%" height="100%">
+                                                <PieChart width={400} height={400}>
+                                                    <Pie
+                                                        dataKey="value"
+                                                        data={currencyComposition}
+                                                        cx="50%"
+                                                        cy="50%"
+                                                        labelLine={false}
+                                                        outerRadius={120}
+                                                        fill="#5b8aff"
+                                                        label
+                                                    >
+                                                        {currencyComposition.map((entry, index) => (
+                                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                            ))}
+                                                            <LabelList dataKey="name" position="insideTop" angle="0"  />
+                                                    </Pie>
+                                                    <Tooltip />
+                                                </PieChart>
+                                            </ResponsiveContainer>
+                                        </>
+                                        }
+                                        
                                     </Col>
                                 </Row>
                                 
