@@ -14,11 +14,15 @@ const app = express();
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
+// app.use(cors({
+//     origin: ['https://www.section.io', 'https://www.google.com/']
+// }));
+
 app.use('/api/currencies', require('./routes/currencyRoutes'))
 app.use('/api/users', require('./routes/userRoutes'))
 app.use('/api/import', require('./routes/importRoutes'))
 
-app.use('/api/twitter', cors({ origin: 'https://beta.spad.finance' }), require('./routes/twitterRoutes'))
+app.use('/api/twitter', cors({ origin: ['https://beta.spad.finance/', 'http://beta.spad.finance/'], optionsSuccessStatus: 200 }), require('./routes/twitterRoutes'))
 
 // serve frontend
 if(process.env.NODE_ENV === 'production') {
