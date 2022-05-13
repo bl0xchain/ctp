@@ -15,7 +15,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
 app.use(cors({
-    origin: ['https://beta.spad.finance/', 'http://beta.spad.finance/']
+    origin: '*'
 }));
 
 app.use('/api/currencies', require('./routes/currencyRoutes'))
