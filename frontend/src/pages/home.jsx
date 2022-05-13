@@ -53,15 +53,15 @@ const Home = () => {
                 }
                 let ctp_composition = {
                     C: {
-                        name: 'C',
+                        name: 'Coin',
                         value: 0
                     },
                     T: {
-                        name: 'T',
+                        name: 'Token',
                         value: 0
                     },
                     P: {
-                        name: 'P',
+                        name: 'Protocol',
                         value: 0
                     }
                 }
@@ -69,16 +69,29 @@ const Home = () => {
                     if(currency.weight > 5) {
                         currency_stats[currency.name] = {
                             name: currency.name,
-                            value: Math.round(currency.weight * 100) / 100
+                            value: currency.weight
                         }
                     } else {
-                        currency_stats['Other'].value = Math.round(currency_stats['Other'].value * 100) / 100 + Math.round(currency.weight * 100) / 100
+                        currency_stats['Other'].value = currency_stats['Other'].value + currency.weight
                     }
-                    ctp_composition[currency.category].value = ctp_composition[currency.category].value + Math.round(currency.weight * 100) / 100
+                    ctp_composition[currency.category].value = ctp_composition[currency.category].value + currency.weight
                 })
+
+                ctp_composition = Object.values(ctp_composition);
+                ctp_composition.map(item => {
+                    item.value = Math.round(item.value * 100) / 100
+                    return item
+                })
+
+                currency_stats = Object.values(currency_stats);
+                currency_stats.map(item => {
+                    item.value = Math.round(item.value * 100) / 100
+                    return item
+                })
+
                 
-                setCurrencyComposition(Object.values(currency_stats))
-                setCtpComposition(Object.values(ctp_composition))
+                setCurrencyComposition(currency_stats)
+                setCtpComposition(ctp_composition)
             }
             setLoading(false)
         }
@@ -106,7 +119,7 @@ const Home = () => {
 
     return (
         <Container>
-            <div className="text-center">
+            <div className="text-center compact">
                 <Form className="ctp-group mb-2 fw-bold fs-4 text-secondary">
                     <Form.Check 
                         inline
@@ -193,7 +206,11 @@ const Home = () => {
                                             <YAxis tickFormatter={formatPrice} label={{ value: 'Price in $', angle: -90, position: 'insideLeft' }} />
                                             <Tooltip formatter={formatTooltip} labelFormatter={formatTooltipLabel} />
                                             <Legend />
-                                            <Line type="linear" dot={false} dataKey="ctp_value_10" stroke="#82ca9d" />
+                                            {
+                                                ctpGroup === 'CTP10' ?
+                                                <Line type="linear" dot={false} dataKey="ctp_value_10" stroke="#82ca9d" /> :
+                                                <Line type="linear" dot={false} dataKey="ctp_value_50" stroke="#82ca9d" />
+                                            }
                                             <Line type="linear" dot={false} dataKey="bitcoin" stroke="#8884d8" />
                                             <Line type="linear" dot={false} dataKey="ethereum" stroke="#ffc658" />
                                         </LineChart>
@@ -215,63 +232,6 @@ const Home = () => {
                         {
                             currencyStats &&
                             <div className="mb-5">
-                                <Table responsive className="ctp-stats-table mb-5">
-                                    <thead>
-                                        <tr>
-                                            <th className="text-start">Currency Name</th>
-                                            <th>Classification</th>
-                                            <th>weight</th>
-                                            <th>Market Cap</th>
-                                            <th>Price</th>
-                                            <th className="text-end">Price Change</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {
-                                        currencyStats.map(currency => (
-                                            <tr key={currency._id}>
-                                                <td className="text-start">
-                                                    <Link to={"/currency/"+currency.id}>
-                                                        <img alt="logo" className="currency-logo" src={currency.image} width="25"/> {" "}
-                                                        <span className="currency-name">{currency.name}</span> {" "}
-                                                        <small className="text-muted text-uppercase">{currency.symbol}</small>
-                                                    </Link>
-                                                </td>
-                                                <td>
-                                                    <span className="currency-type-tag">{currency.category}</span>
-                                                </td>
-                                                <td>
-                                                    <NumberFormat value={currency.weight} displayType={'text'}
-                                                        thousandSeparator={true} decimalScale="2"
-                                                        decimalSeparator="." suffix={'%'} />
-                                                </td>
-                                                <td>
-                                                    <NumberFormat value={currency.market_cap} displayType={'text'}
-                                                        thousandSeparator={true} prefix={'$'} decimalScale="2"
-                                                        decimalSeparator="."/>
-                                                </td>
-                                                <td>
-                                                    <NumberFormat value={currency.price} displayType={'text'}
-                                                        thousandSeparator={true} prefix={'$'} decimalScale="2"
-                                                        decimalSeparator="."/>
-                                                </td>
-                                                <td className="text-end">
-                                                    <NumberFormat
-                                                        className={currency.price_change_24h > 0 ? 'text-success' : 'text-danger'}
-                                                        value={currency.price_change_24h} displayType={'text'}
-                                                        decimalScale="2" decimalSeparator="." suffix={'%'}/>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    }
-                                    </tbody>
-                                </Table>
-
-                                <div className="mb-5">
-                                    <Button size="lg" disabled className="rounded-pill">
-                                        COMING SOON
-                                    </Button>
-                                </div>
 
                                 <Row>
                                     <Col sm="6" style={{height: '350px'}}>
@@ -330,6 +290,65 @@ const Home = () => {
                                         
                                     </Col>
                                 </Row>
+
+                                <div className="mb-5">
+                                    <Button size="lg" disabled className="rounded-pill">
+                                        Buy CTP Index
+                                    </Button>
+                                    <p>Coming Soon</p>
+                                </div>
+
+                                <Table responsive className="ctp-stats-table mb-5">
+                                    <thead>
+                                        <tr>
+                                            <th className="text-start">Currency Name</th>
+                                            <th>Classification</th>
+                                            <th>weight</th>
+                                            <th>Market Cap</th>
+                                            <th>Price</th>
+                                            <th className="text-end">Price Change</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {
+                                        currencyStats.map(currency => (
+                                            <tr key={currency._id}>
+                                                <td className="text-start">
+                                                    <Link to={"/currency/"+currency.id}>
+                                                        <img alt="logo" className="currency-logo" src={currency.image} width="25"/> {" "}
+                                                        <span className="currency-name">{currency.name}</span> {" "}
+                                                        <small className="text-muted text-uppercase">{currency.symbol}</small>
+                                                    </Link>
+                                                </td>
+                                                <td>
+                                                    <span className="currency-type-tag">{currency.category}</span>
+                                                </td>
+                                                <td>
+                                                    <NumberFormat value={currency.weight} displayType={'text'}
+                                                        thousandSeparator={true} decimalScale="2"
+                                                        decimalSeparator="." suffix={'%'} />
+                                                </td>
+                                                <td>
+                                                    <NumberFormat value={currency.market_cap} displayType={'text'}
+                                                        thousandSeparator={true} prefix={'$'} decimalScale="2"
+                                                        decimalSeparator="."/>
+                                                </td>
+                                                <td>
+                                                    <NumberFormat value={currency.price} displayType={'text'}
+                                                        thousandSeparator={true} prefix={'$'} decimalScale="2"
+                                                        decimalSeparator="."/>
+                                                </td>
+                                                <td className="text-end">
+                                                    <NumberFormat
+                                                        className={currency.price_change_24h > 0 ? 'text-success' : 'text-danger'}
+                                                        value={currency.price_change_24h} displayType={'text'}
+                                                        decimalScale="2" decimalSeparator="." suffix={'%'}/>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    }
+                                    </tbody>
+                                </Table>
                                 
                                 <Row className="mt-5">
                                     <Col className="text-start">
