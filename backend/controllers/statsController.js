@@ -115,15 +115,15 @@ const getCTPStatsHistory = asyncHandler( async (req, res) => {
         batches.map(batch => {
             data[batch._id] = {
                 created: batch.created,
-                ctp_value_10: batch.ctp_value_10,
-                ctp_value_50: batch.ctp_value_50
+                CTP10: batch.ctp_value_10,
+                CTP50: batch.ctp_value_50
             }
         })
         // console.log(batches)
         const currencyStats = await Stats.find({ batch: { $in: Object.keys(data) }, currency: { $in: currencyIds } }).populate('currency').populate('batch')
         const stats = [];
         currencyStats.map(currency => {
-            data[currency.batch._id][currency.currency.coingecko_id] = currency.price
+            data[currency.batch._id][currency.currency.coingecko_id.toUpperCase()] = currency.price
         })
 
         res.status(200).json(Object.values(data).sort(function(a, b) {

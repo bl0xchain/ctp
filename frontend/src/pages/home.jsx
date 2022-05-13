@@ -208,11 +208,11 @@ const Home = () => {
                                             <Legend />
                                             {
                                                 ctpGroup === 'CTP10' ?
-                                                <Line type="linear" dot={false} dataKey="ctp_value_10" stroke="#82ca9d" /> :
-                                                <Line type="linear" dot={false} dataKey="ctp_value_50" stroke="#82ca9d" />
+                                                <Line type="linear" dot={false} dataKey="CTP10" stroke="#82ca9d" strokeWidth={2} /> :
+                                                <Line type="linear" dot={false} dataKey="CTP50" stroke="#82ca9d" strokeWidth={2} />
                                             }
-                                            <Line type="linear" dot={false} dataKey="bitcoin" stroke="#8884d8" />
-                                            <Line type="linear" dot={false} dataKey="ethereum" stroke="#ffc658" />
+                                            <Line type="linear" dot={false} dataKey="BITCOIN" stroke="#ffc658" />
+                                            <Line type="linear" dot={false} dataKey="ETHEREUM" stroke="#8884d8" />
                                         </LineChart>
                                     </ResponsiveContainer>
                                     {
