@@ -1,0 +1,19 @@
+{
+  "files": {
+    "main.css": "/static/css/main.59c9ba9e.css",
+    "main.js": "/static/js/main.c9ec81c9.js",
+    "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
+    "static/media/sf-pro-display-bold.otf": "/static/media/sf-pro-display-bold.b1f4d2c69fa808ebca12.otf",
+    "static/media/sf-pro-display.otf": "/static/media/sf-pro-display.d1f5e6e16dd4f75c3950.otf",
+    "static/media/hoefler-text.ttf": "/static/media/hoefler-text.5af510cd2828296b93cb.ttf",
+    "static/media/hoefler-text-black.ttf": "/static/media/hoefler-text-black.993c9897ebc2043bc90c.ttf",
+    "index.html": "/index.html",
+    "main.59c9ba9e.css.map": "/static/css/main.59c9ba9e.css.map",
+    "main.c9ec81c9.js.map": "/static/js/main.c9ec81c9.js.map",
+    "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.59c9ba9e.css",
+    "static/js/main.c9ec81c9.js"
+  ]
+}
