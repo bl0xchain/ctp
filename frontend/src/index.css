@@ -1,8 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Faustina:wght@400;700&family=Heebo:wght@400;700&family=Tajawal:wght@400;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Faustina:wght@400;700&family=Heebo:wght@400;700&family=Tajawal:wght@400;700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,300;1,400;1,700&display=swap');
+
+@font-face {
+  font-family: SFProDisplay;
+  src: local(SFProDisplay), url("./fonts/sf-pro-display.otf") format("opentype");
+}
+
+@font-face {
+  font-family: SFProDisplay;
+  font-weight: bold;
+  src: local(SFProDisplay), url("./fonts/sf-pro-display-bold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: HoeflerText;
+  src: local(HoeflerText), url("./fonts/hoefler-text.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: HoeflerTextBlack;
+  src: local(HoeflerText), url("./fonts/hoefler-text-black.ttf") format("truetype");
+}
+
+.ff-sf-pro {
+  font-family: SFProDisplay;
+}
+.ff-hoefler {
+  font-family: HoeflerText;
+}
+.ff-hoefler-black {
+  font-family: HoeflerTextBlack;
+}
 
 body {
   margin: 0;
-  font-family: 'Tajawal', sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: SFProDisplay, sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -20,7 +52,11 @@ a {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Faustina', serif;
+  /* font-family: 'Roboto', serif; */
+}
+
+.fw-bolder {
+  font-weight: 900 !important;
 }
 
 .compact {
@@ -33,12 +69,16 @@ h1, h2, h3, h4, h5, h6 {
   width: 25px;
   height: 25px;
   line-height: 25px;
+  text-align: center;
   text-transform: capitalize;
   background: #5b8aff;
   color: #fff;
-  font-weight: 700;
-  font-size: 18px;
+  font-size: 16px;
   border-radius: 50%;
+}
+
+.currency-type-tag.C {
+  
 }
 
 .ctp-stats-table th {
@@ -100,4 +140,33 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
   background: #ffffff9e;
   padding-top: 200px
+}
+.ctp-data-small {
+  color: #888;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 18px;
+}
+.ctp-change-percent {
+  display: inline-block;
+  padding: 0 15px;
+  margin-left: 15px;
+  border-left: 1px solid #CCC;
+}
+.ctp-index-main-row {
+  min-height: 400px;
+}
+.navbar-brand h2 {
+  margin-bottom: 0px;
+  font-size: 36px;
+  
+}
+.navbar-brand h2 span {
+  font-weight: 800;
+  font-size: 32px;
+  text-transform: lowercase;
+  letter-spacing: 2px;
+  text-shadow: -1px 0px 0px #A9A9A9, 1px 0px 0px #A9A9A9, 0px -1px 0px #A9A9A9, 0px 1px 0px #A9A9A9;
+  color: #E8E8E8;
+  margin-left: 3px;
 }

@@ -136,6 +136,81 @@ const getCTPStatsHistory = asyncHandler( async (req, res) => {
     }
 } )
 
+const getCTPStatsReturns = asyncHandler( async (req, res) => {
+    const { duration } = req.query || 14;
+    const currencies = await Currency.find({ coingecko_id: { $in: ['ethereum', 'bitcoin'] } })
+    const currencyIds = currencies.map(curr => { return curr._id })
+    const data = {}
+    try {
+        const today = new Date();
+        const batches = {};        
+        const batch  = await Batch.findOne({}, {}, { sort: { created: -1 } })
+        batches[batch._id] = {
+            name: 'current',
+            batch: batch
+        }
+        let priorDate = new Date(new Date().setDate(today.getDate() - 15));
+        const batch_day  = await Batch.findOne({ created: { $lt: priorDate } }, {}, { sort: { created: -1 } })
+        batches[batch_day._id] = {
+            name: 'day',
+            batch: batch_day
+        }
+        priorDate = new Date(new Date().setDate(today.getDate() - 30));
+        const batch_month  = await Batch.findOne({ created: { $lt: priorDate } }, {}, { sort: { created: -1 } })
+        batches[batch_month._id] = {
+            name: 'month',
+            batch: batch_month
+        }
+        priorDate = new Date(new Date().setDate(today.getDate() - 90));
+        const batch_3month  = await Batch.findOne({ created: { $lt: priorDate } }, {}, { sort: { created: -1 } })
+        batches[batch_3month._id] = {
+            name: 'month3',
+            batch: batch_3month
+        }
+        priorDate = new Date(new Date().setDate(today.getDate() - 182));
+        const batch_6month  = await Batch.findOne({ created: { $lt: priorDate } }, {}, { sort: { created: -1 } })
+        batches[batch_6month._id] = {
+            name: 'month6',
+            batch: batch_6month
+        }
+        priorDate = new Date(new Date().setDate(today.getDate() - 365));
+        let batch_year  = await Batch.findOne({ created: { $lt: priorDate } }, {}, { sort: { created: -1 } })
+        if(batch_year === null) {
+            batch_year  = await Batch.findOne({}, {}, { sort: { created: 1 } })
+        }
+        batches[batch_year._id] = {
+            name: 'year',
+            batch: batch_year
+        }
+
+        const currencyStats = await Stats.find({ batch: { $in: Object.keys(batches) }, currency: { $in: currencyIds } }).populate('currency').populate('batch')
+
+        currencyStats.map(stats => {
+            batches[stats.batch._id][stats.currency.name] = stats.price;
+        })
+
+        let item;
+        Object.keys(batches).map(batch_id => {
+            item = batches[batch_id];
+            data[item.name] = {
+                CTP10: item.batch.ctp_value_10,
+                CTP50: item.batch.ctp_value_50,
+                Bitcoin: item.Bitcoin,
+                Ethereum: item.Ethereum,
+                created: item.batch.created
+            }
+        })
+
+        res.status(200).json({
+            data
+        })
+    } catch (error) {
+        console.log(error.message);
+        res.status(400)
+        throw new Error("Problem with getting CTP stats History")
+    }
+} )
+
 const calculateCTPForBatch = asyncHandler(async(batch_id) => {
     console.log('inside ')
     if(!batch_id) {
@@ -228,5 +303,6 @@ module.exports = {
     getCurrencyStatsByCurrency,
     getCurrencyStatsHistory,
     refreshCurrencyStats,
-    getCTPStatsHistory
+    getCTPStatsHistory,
+    getCTPStatsReturns
 }

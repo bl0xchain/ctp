@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
-import { Container, Form, Row, Col, Table, ButtonToolbar, ButtonGroup, Button, Spinner, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Container, Form, Row, Col, Table, ButtonToolbar, ButtonGroup, Button, Spinner } from "react-bootstrap";
 import axios from 'axios';
-import { NumericFormat } from "react-number-format";
+import NumberFormat from "react-number-format";
 import { Link } from "react-router-dom";
 import Moment from 'react-moment';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LabelList } from 'recharts';
 import format from 'number-format.js'
 import { FaFilePdf } from "react-icons/fa";
 import Returns from "../components/Returns";
 import Share from "../components/Share";
-import StatsChart from "../components/StatsChart";
-import StatsPieChart from "../components/StatsPieChart";
 
-const Home = ({ setLogoColor }) => {
+const Home = () => {
     const [ctpGroup, setCtpGroup] = useState('CTP10')
     const [batch, setBatch] = useState(null)
     const [currencyStats, setCurrencyStats] = useState([])
@@ -102,14 +101,6 @@ const Home = ({ setLogoColor }) => {
     }, [ctpGroup])
 
     useEffect(() => {
-        if(ctpGroup === 'CTP10') {
-            setLogoColor((ctp24Change10 > 0) ? 'text-success' : 'text-danger');
-        } else {
-            setLogoColor((ctp24Change50 > 0) ? 'text-success' : 'text-danger');
-        }
-    }, [ctp24Change10, ctp24Change50, ctpGroup])
-
-    useEffect(() => {
         const fetchStats = async () => {
             setCtpStatsLoading(true)
             const ctpResponse = await axios.get('api/currencies/ctp-stats/', {params: {duration: duration}})
@@ -121,69 +112,59 @@ const Home = ({ setLogoColor }) => {
                 setCtp24Change50(diff50 / ctp24ago.CTP50 * 100)
                 const diff10 = ctp24now.CTP10 - ctp24ago.CTP10
                 setCtp24Change10(diff10 / ctp24ago.CTP10 * 100)
+                
             }
             setCtpStatsLoading(false)
         }
         fetchStats()
     }, [duration])
 
-    const renderTooltip = (props) => (
-        <Tooltip id="button-tooltip" {...props}>
-          Simple tooltip
-        </Tooltip>
-      );
-
     return (
         <>
-        
-        <div className="mb-5">
+        <Container>
+            <Row>
+                <Col md="4">
+                    <h1 className="fw-bolder text-danger">CTP INDEX</h1>
+                    {
+                        batch ?
+                        <p className="ctp-data-small">
+                            <NumberFormat 
+                                value={ctpGroup === 'CTP10' ? batch.ctp_value_10 : batch.ctp_value_50} 
+                                displayType={'text'} thousandSeparator={true} prefix={'$'} 
+                                decimalScale="2" decimalSeparator="." /> 
+                            <span className="ctp-change-percent">
+                            {
+                                ctpGroup === 'CTP10'?
+                                <NumberFormat
+                                    value={ctp24Change10} displayType={'text'} 
+                                    className={ctp24Change10 > 0 ? 'text-success' : 'text-danger'}
+                                    decimalScale="2" decimalSeparator="." suffix={'%'}/>
+                                :
+                                <NumberFormat
+                                    value={ctp24Change50} displayType={'text'}
+                                    className={ctp24Change50 > 0 ? 'text-success' : 'text-danger'}
+                                    decimalScale="2" decimalSeparator="." suffix={'%'}/>
+                                
+                            } 
+                            </span>
+                            1 Day
+                        </p> :
+                        <p>&nbsp;</p>
+                    }
+                    
+                </Col>
+                <Col md="8">
+                    <Share />
+                </Col>
+            </Row>
+        </Container>
+        <div className="bg-dark">
             <Container style={{minHeight: '400px'}}>
             {
                 batch &&
                 <Row className="pt-5 pb-5 align-items-center">
                     <Col md="3">
-                        
-                        <h5 className="text-secondary">index value</h5>
-                        <h2 className="fs-1 fw-bold text-dark mb-4">
-                            <NumericFormat 
-                                value={ctpGroup === 'CTP10' ? batch.ctp_value_10 : batch.ctp_value_50} 
-                                displayType={'text'} thousandSeparator={true} prefix={'$'} 
-                                decimalScale="2" decimalSeparator="." />
-                        </h2>
-                        <div className="fs-5 mb-5">
-                            <p className="d-inline-block me-4">
-                            {
-                                ctpGroup === 'CTP10'?
-                                
-                                <NumericFormat
-                                    value={ctp24Change10} displayType={'text'}
-                                    decimalScale="2" decimalSeparator="." suffix={'%'}
-                                    className={ctp24Change10 > 0 ? 'text-success' : 'text-danger'} />
-                                :
-                                
-                                <NumericFormat
-                                    value={ctp24Change50} displayType={'text'}
-                                    decimalScale="2" decimalSeparator="." suffix={'%'}
-                                    className={ctp24Change50 > 0 ? 'text-success' : 'text-danger'} />
-                            }
-                            </p>
-                            <p className="text-secondary d-inline-block">24 hrs</p>
-                        </div>
-                        <OverlayTrigger
-                            overlay={
-                                <Tooltip id="button-tooltip">
-                                    Coming Soon
-                                </Tooltip>
-                            }
-                        >
-                            <Button className="fw-bold" size="lg">BUY CTP</Button>
-                        </OverlayTrigger>
-                        <div className="mt-3">
-                            <Share />
-                        </div>
-                    </Col>
-                    <Col md="9" className="ctp-graph-container mb-5">
-                        <Form className="ff-hoefler ctp-group mb-2 fs-3 text-secondary mb-4 text-center">
+                        <Form className="ctp-group mb-2 fw-bold fs-4 text-secondary mb-4">
                             <Form.Check 
                                 inline
                                 label="CTP10"
@@ -205,17 +186,68 @@ const Home = ({ setLogoColor }) => {
                                 checked={ctpGroup === 'CTP50' ? 'checked': ''}
                             />
                         </Form>
+                        <h5 className="text-secondary">Index Value</h5>
+                        <h2 className="fs-1 text-light mb-4">
+                            <NumberFormat 
+                                value={ctpGroup === 'CTP10' ? batch.ctp_value_10 : batch.ctp_value_50} 
+                                displayType={'text'} thousandSeparator={true} prefix={'$'} 
+                                decimalScale="2" decimalSeparator="." />
+                        </h2>
+                        <h2 className="mb-0">
+                        {
+                            ctpGroup === 'CTP10'?
+                            
+                            <NumberFormat
+                                value={ctp24Change10} displayType={'text'}
+                                decimalScale="2" decimalSeparator="." suffix={'%'}
+                                className={ctp24Change10 > 0 ? 'text-success' : 'text-danger'} />
+                            :
+                            
+                            <NumberFormat
+                                value={ctp24Change50} displayType={'text'}
+                                decimalScale="2" decimalSeparator="." suffix={'%'}
+                                className={ctp24Change50 > 0 ? 'text-success' : 'text-danger'} />
+                        }
+                        </h2>
+                        <p className="text-secondary">1 day</p>
+                    </Col>
+                    <Col md="9" className="ctp-graph-container mb-5">
                         <ButtonToolbar aria-label="Duration Selection" className="mb-2">
-                                <ButtonGroup aria-label="Basic example" className="text-end">
-                                    <Button variant={duration === 1 ? "secondary" : "light"} onClick={()=>setDuration(1)}>24h</Button>
-                                    <Button variant={duration === 7 ? "secondary" : "light"}  onClick={()=>setDuration(7)}>7d</Button>
-                                    <Button variant={duration === 14 ? "secondary" : "light"}  onClick={()=>setDuration(14)}>14d</Button>
-                                    <Button variant={duration === 30 ? "secondary" : "light"}  onClick={()=>setDuration(30)}>30d</Button>
-                                    <Button variant={duration === 90 ? "secondary" : "light"}  onClick={()=>setDuration(90)}>90d</Button>
-                                    <Button variant={duration === 180 ? "secondary" : "light"}  onClick={()=>setDuration(180)}>180d</Button>
-                                </ButtonGroup>
-                            </ButtonToolbar>
-                            <StatsChart ctpStats={ctpStats} ctpGroup={ctpGroup} />
+                            <ButtonGroup aria-label="Basic example" className="text-end">
+                                <Button variant={duration === 1 ? "secondary" : "light"} onClick={()=>setDuration(1)}>24h</Button>
+                                <Button variant={duration === 7 ? "secondary" : "light"}  onClick={()=>setDuration(7)}>7d</Button>
+                                <Button variant={duration === 14 ? "secondary" : "light"}  onClick={()=>setDuration(14)}>14d</Button>
+                                <Button variant={duration === 30 ? "secondary" : "light"}  onClick={()=>setDuration(30)}>30d</Button>
+                                <Button variant={duration === 90 ? "secondary" : "light"}  onClick={()=>setDuration(90)}>90d</Button>
+                                <Button variant={duration === 180 ? "secondary" : "light"}  onClick={()=>setDuration(180)}>180d</Button>
+                            </ButtonGroup>
+                        </ButtonToolbar>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart
+                                width={1200}
+                                height={800}
+                                data={ctpStats}
+                                margin={{
+                                    top: 5,
+                                    right: 30,
+                                    left: 20,
+                                    bottom: 5,
+                                }}
+                                >
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis tickFormatter={formatDate} dataKey="created" />
+                                <YAxis tickFormatter={formatPrice} />
+                                <Tooltip formatter={formatTooltip} labelFormatter={formatTooltipLabel} />
+                                <Legend />
+                                {
+                                    ctpGroup === 'CTP10' ?
+                                    <Line type="linear" dot={false} dataKey="CTP10" stroke="#82ca9d" strokeWidth={2} /> :
+                                    <Line type="linear" dot={false} dataKey="CTP50" stroke="#82ca9d" strokeWidth={2} />
+                                }
+                                <Line type="linear" dot={false} dataKey="BITCOIN" stroke="#ffc658" />
+                                <Line type="linear" dot={false} dataKey="ETHEREUM" stroke="#8884d8" />
+                            </LineChart>
+                        </ResponsiveContainer>
                         {
                             ctpStatsLoading &&
                             <div className="loading-container">
@@ -224,7 +256,6 @@ const Home = ({ setLogoColor }) => {
                                 <Spinner animation="grow" variant="primary" /> {" "}
                             </div>
                         }
-                        <div className="pb-5 clearfix"></div>
                     </Col>
                 </Row>
             }
@@ -235,53 +266,28 @@ const Home = ({ setLogoColor }) => {
             <Container className="pt-5 pb-5">
                 <Row>
                     <Col md="6">
-                        <h2 className="mb-3 fs-5 text-secondary">Ticker <span className="fs-2 ms-1  ff-hoefler-black text-dark">CTP</span></h2>
-                        <p className="pe-3">
-                        The CTP is the index of the top cryptocurrencies based on deep research of the currencies in the emerging industry. CTP is an abbreviation for Coins, Tokens and Protocol which are the main elements for Cryptocurrencies. We update CTP with new elements as and when the market changes.
+                        <h2 className="mb-3">Ticker : CTP</h2>
+                        <p>
+                        The S&P 500® is widely regarded as the best single gauge of large-cap U.S. equities. According to our Annual Survey of Assets, an estimated USD 15.6 trillion is indexed or benchmarked to the index, with indexed assets comprising approximately USD 7.1 trillion of this total (as of Dec. 31, 2021). The index includes 500 leading companies and covers approximately 80% of available market capitalization.
                         </p>
                     </Col>
                     <Col md="6">
                         <h2 className="mb-4">Documents</h2>
                         <ul className="list-inline">
                             <li className="list-inline-item">
-                                <OverlayTrigger
-                                    overlay={
-                                        <Tooltip id="button-tooltip1">
-                                            Coming Soon
-                                        </Tooltip>
-                                    }
-                                >
-                                    <Button variant="outline-dark" size="lg" href="#" target="_blank">
-                                        <FaFilePdf /> Fact Sheet
-                                    </Button>
-                                </OverlayTrigger>
+                                <Button variant="outline-dark" size="lg" href="#" target="_blank">
+                                    <FaFilePdf /> Fact Sheet
+                                </Button>
                             </li>
                             <li className="list-inline-item">
-                                <OverlayTrigger
-                                    overlay={
-                                        <Tooltip id="button-tooltip2">
-                                            Coming Soon
-                                        </Tooltip>
-                                    }
-                                >
-                                    <Button variant="outline-dark" size="lg" href="#" target="_blank">
-                                        <FaFilePdf /> Methodology
-                                    </Button>
-                                </OverlayTrigger>
-                                
+                                <Button variant="outline-dark" size="lg" href="#" target="_blank">
+                                    <FaFilePdf /> Methodology
+                                </Button>
                             </li>
                             <li className="list-inline-item">
-                                <OverlayTrigger
-                                    overlay={
-                                        <Tooltip id="button-tooltip3">
-                                            Coming Soon
-                                        </Tooltip>
-                                    }
-                                >
-                                    <Button variant="outline-dark" size="lg" href="#" target="_blank">
-                                        <FaFilePdf /> Additional Info
-                                    </Button>
-                                </OverlayTrigger>
+                                <Button variant="outline-dark" size="lg" href="#" target="_blank">
+                                    <FaFilePdf /> Additional Info
+                                </Button>
                             </li>
                         </ul>
                     </Col>
@@ -300,14 +306,52 @@ const Home = ({ setLogoColor }) => {
                         <h4>CTP COMPOSITION</h4>
                         {
                             ctpComposition && 
-                            <StatsPieChart statsData={ctpComposition} />
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart width={400} height={400}>
+                                    <Pie
+                                        data={ctpComposition}
+                                        cx="50%"
+                                        cy="50%"
+                                        labelLine={false}
+                                        outerRadius={120}
+                                        fill="#8884d8"
+                                        dataKey="value"
+                                        label
+                                    >
+                                        {ctpComposition.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                        <LabelList dataKey="name" position="insideTop" angle="0"  />
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
                         }
                     </Col>
                     <Col sm="6" style={{height: '350px'}}>
                         { currencyComposition && 
                         <>
                             <h4>PORTFOLIO COMPOSITION</h4>
-                            <StatsPieChart statsData={currencyComposition} />
+                            <ResponsiveContainer width="100%" height="100%">
+                                <PieChart width={400} height={400}>
+                                    <Pie
+                                        dataKey="value"
+                                        data={currencyComposition}
+                                        cx="50%"
+                                        cy="50%"
+                                        labelLine={false}
+                                        outerRadius={120}
+                                        fill="#5b8aff"
+                                        label
+                                    >
+                                        {currencyComposition.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                            <LabelList dataKey="name" position="insideTop" angle="0"  />
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
                         </>
                         }
                     </Col>
@@ -351,22 +395,22 @@ const Home = ({ setLogoColor }) => {
                                     <span className={"currency-type-tag "+ currency.category}>{currency.category}</span>
                                 </td>
                                 <td>
-                                    <NumericFormat value={currency.weight} displayType={'text'}
+                                    <NumberFormat value={currency.weight} displayType={'text'}
                                         thousandSeparator={true} decimalScale="2"
                                         decimalSeparator="." suffix={'%'} />
                                 </td>
                                 <td>
-                                    <NumericFormat value={currency.market_cap} displayType={'text'}
+                                    <NumberFormat value={currency.market_cap} displayType={'text'}
                                         thousandSeparator={true} prefix={'$'} decimalScale="2"
                                         decimalSeparator="."/>
                                 </td>
                                 <td>
-                                    <NumericFormat value={currency.price} displayType={'text'}
+                                    <NumberFormat value={currency.price} displayType={'text'}
                                         thousandSeparator={true} prefix={'$'} decimalScale="2"
                                         decimalSeparator="."/>
                                 </td>
                                 <td className="text-end">
-                                    <NumericFormat
+                                    <NumberFormat
                                         className={currency.price_change_24h > 0 ? 'text-success' : 'text-danger'}
                                         value={currency.price_change_24h} displayType={'text'}
                                         decimalScale="2" decimalSeparator="." suffix={'%'}/>

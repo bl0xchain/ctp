@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { Container, Row, Col, ButtonToolbar, Button, ButtonGroup } from "react-bootstrap"
-import NumberFormat from "react-number-format";
+import { NumericFormat } from "react-number-format";
 import { useParams } from "react-router-dom";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -16,7 +16,13 @@ const Currency = () => {
     const [duration, setDuration] = useState(14)
 
     const formatPrice = (price) => {
-        return format( "$#,###.", price );
+        console.log(price);
+        if(price < 1) {
+            return format( "$#.###", price );
+        } else {
+            return format( "$#,###.##", price );
+        }
+        
     }
 
     const formatDate = (date) => {
@@ -59,7 +65,7 @@ const Currency = () => {
                         </h4>
                         <h2 className="currency-price-details" >
 
-                            <NumberFormat value={latest.price} displayType={'text'}
+                            <NumericFormat value={latest.price} displayType={'text'}
                                 thousandSeparator={true} prefix={'$'} decimalScale="2"
                                 decimalSeparator="."/> {" "}
                             <span 
@@ -68,7 +74,7 @@ const Currency = () => {
                                     latest.price_change_percentage_24h > 0 ? 
                                     <FaCaretUp /> : <FaCaretDown />
                                 }
-                                <NumberFormat
+                                <NumericFormat
                                     value={latest.price_change_percentage_24h} displayType={'text'}
                                     decimalScale="2" decimalSeparator="." suffix={'%'}/>
                             </span>
@@ -78,25 +84,25 @@ const Currency = () => {
                                 <ul className="list-unstyled currency-details-list">
                                     <li>
                                         <span>Market Cap</span>
-                                        <NumberFormat className="fw-bold" value={latest.market_cap} displayType={'text'}
+                                        <NumericFormat className="fw-bold" value={latest.market_cap} displayType={'text'}
                                             thousandSeparator={true} prefix={'$'} decimalScale="2"
                                             decimalSeparator="."/>
                                     </li>
                                     <li>
                                         <span>Volume</span>
-                                        <NumberFormat className="fw-bold" value={latest.volume} displayType={'text'}
+                                        <NumericFormat className="fw-bold" value={latest.volume} displayType={'text'}
                                             thousandSeparator={true} prefix={'$'} decimalScale="2"
                                             decimalSeparator="."/>
                                     </li>
                                     <li>
                                         <span>Circulating Supply</span>
-                                        <NumberFormat className="fw-bold" value={latest.circulating_supply} displayType={'text'}
+                                        <NumericFormat className="fw-bold" value={latest.circulating_supply} displayType={'text'}
                                             thousandSeparator={true} decimalScale="2"
                                             decimalSeparator="."/>
                                     </li>
                                     <li>
                                         <span>Total Supply</span>
-                                        <NumberFormat className="fw-bold" value={latest.total_supply} displayType={'text'}
+                                        <NumericFormat className="fw-bold" value={latest.total_supply} displayType={'text'}
                                             thousandSeparator={true} decimalScale="2"
                                             decimalSeparator="."/>
                                     </li>
@@ -127,7 +133,7 @@ const Currency = () => {
                                         >
                                         <CartesianGrid strokeDasharray="3 3" />
                                         <XAxis tickFormatter={formatDate} dataKey="created" />
-                                        <YAxis tickFormatter={formatPrice} label={{ value: 'Price in $', angle: -90, position: 'insideLeft' }} />
+                                        <YAxis tickFormatter={formatPrice} />
                                         <Tooltip formatter={formatTooltip} labelFormatter={formatTooltipLabel} />
                                         <Legend />
                                         <Line type="linear" dot={false} dataKey="price" stroke="#82ca9d" />
