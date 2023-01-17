@@ -4,56 +4,56 @@ import { Container, Row, Col, ButtonToolbar, Button, ButtonGroup } from "react-b
 import { NumericFormat } from "react-number-format";
 import { useParams } from "react-router-dom";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import format from 'number-format.js'
+import { Line } from '@ant-design/plots';
 
 
 const Currency = () => {
     let { id } = useParams();
     const [currencyStats, setCurrencyStats] = useState([])
+    const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false)
     const [latest, setLatest] = useState(null)
     const [duration, setDuration] = useState(14)
-
-    const formatPrice = (price) => {
-        console.log(price);
-        if(price < 1) {
-            return format( "$#.###", price );
-        } else {
-            return format( "$#,###.##", price );
-        }
-        
-    }
-
-    const formatDate = (date) => {
-        return new Date(date).toLocaleDateString()
-    }
-
-    const formatTooltip = (value, name, props) => {
-        return formatPrice(value)
-    }
-
-    const formatTooltipLabel = (label) => {
-        return new Date(label).toLocaleString()
-    }
 
     useEffect(() => {
         const fetchStats = async () => {
             setLoading(true)
             const response = await axios.get('/api/currencies/history/'+id, {params: {duration}})
+            const respData = [];
             if(response.data) {
                 setCurrencyStats(response.data)
                 setLatest(response.data[response.data.length - 1])
+                response.data.forEach(item => {
+                    respData.push({
+                        created: item.created,
+                        price: item.price
+                    });
+                });
+                setData(respData);
             }
             setLoading(false)
         }
         fetchStats()
     }, [id, duration])
+
+    const config = {
+        data,
+        padding: 'auto',
+        xField: 'created',
+        yField: 'price',
+        xAxis: {
+            type: 'time',
+            tickCount: 5,
+
+        },
+        smooth: true,
+    };
+
     return (
         <Container>
             {
                 loading ?
-                <>Loading...</> :
+                <div style={{minHeight: '100vh' }}>Loading...</div> :
             <>
                 {
                     latest ?
@@ -63,7 +63,7 @@ const Currency = () => {
                             {latest.name} {" "}
                             (<span className="text-uppercase">{latest.symbol}</span>)
                         </h4>
-                        <h2 className="currency-price-details" >
+                        <h2 className="fs-1 ff-satoshi-black currency-price-details mb-5" >
 
                             <NumericFormat value={latest.price} displayType={'text'}
                                 thousandSeparator={true} prefix={'$'} decimalScale="2"
@@ -79,8 +79,8 @@ const Currency = () => {
                                     decimalScale="2" decimalSeparator="." suffix={'%'}/>
                             </span>
                         </h2>
-                        <Row>
-                            <Col md="6">
+                        <Row className="mb-5">
+                            <Col md="5">
                                 <ul className="list-unstyled currency-details-list">
                                     <li>
                                         <span>Market Cap</span>
@@ -108,7 +108,7 @@ const Currency = () => {
                                     </li>
                                 </ul>
                             </Col>
-                            <Col md="6" className="ctp-graph-container">
+                            <Col md="7">
                                 <ButtonToolbar aria-label="Duration Selection" className="mb-2">
                                     <ButtonGroup aria-label="Basic example" className="text-end">
                                         <Button variant={duration === 1 ? "secondary" : "light"} onClick={()=>setDuration(1)}>24h</Button>
@@ -119,32 +119,13 @@ const Currency = () => {
                                         <Button variant={duration === 180 ? "secondary" : "light"}  onClick={()=>setDuration(180)}>180d</Button>
                                     </ButtonGroup>
                                 </ButtonToolbar>
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart
-                                        width={1200}
-                                        height={800}
-                                        data={currencyStats}
-                                        margin={{
-                                            top: 5,
-                                            right: 30,
-                                            left: 20,
-                                            bottom: 5,
-                                        }}
-                                        >
-                                        <CartesianGrid strokeDasharray="3 3" />
-                                        <XAxis tickFormatter={formatDate} dataKey="created" />
-                                        <YAxis tickFormatter={formatPrice} />
-                                        <Tooltip formatter={formatTooltip} labelFormatter={formatTooltipLabel} />
-                                        <Legend />
-                                        <Line type="linear" dot={false} dataKey="price" stroke="#82ca9d" />
-                                    </LineChart>
-                                </ResponsiveContainer>
+                                <div className="ctp-graph-container">
+                                    { currencyStats.length > 0 && <Line {...config} /> }
+                                </div>
                             </Col>
                         </Row>
-                        <div style={{minHeight: '800px'}}></div>
-                        
                     </div> :
-                    <>Empty</>
+                    <div style={{minHeight: '100vh' }}></div>
                 }
             </>
             }

@@ -1,19 +1,22 @@
 {
   "files": {
-    "main.css": "/static/css/main.59c9ba9e.css",
-    "main.js": "/static/js/main.c9ec81c9.js",
+    "main.css": "/static/css/main.1bc50d48.css",
+    "main.js": "/static/js/main.c824b5d5.js",
     "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
     "static/media/sf-pro-display-bold.otf": "/static/media/sf-pro-display-bold.b1f4d2c69fa808ebca12.otf",
     "static/media/sf-pro-display.otf": "/static/media/sf-pro-display.d1f5e6e16dd4f75c3950.otf",
     "static/media/hoefler-text.ttf": "/static/media/hoefler-text.5af510cd2828296b93cb.ttf",
     "static/media/hoefler-text-black.ttf": "/static/media/hoefler-text-black.993c9897ebc2043bc90c.ttf",
+    "static/media/Satoshi-Bold.otf": "/static/media/Satoshi-Bold.b5dd7deee13e32689234.otf",
+    "static/media/Satoshi-Regular.otf": "/static/media/Satoshi-Regular.811ccb0b5af1892a71df.otf",
+    "static/media/Satoshi-Black.otf": "/static/media/Satoshi-Black.d27fb329e3c56de46506.otf",
     "index.html": "/index.html",
-    "main.59c9ba9e.css.map": "/static/css/main.59c9ba9e.css.map",
-    "main.c9ec81c9.js.map": "/static/js/main.c9ec81c9.js.map",
+    "main.1bc50d48.css.map": "/static/css/main.1bc50d48.css.map",
+    "main.c824b5d5.js.map": "/static/js/main.c824b5d5.js.map",
     "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.59c9ba9e.css",
-    "static/js/main.c9ec81c9.js"
+    "static/css/main.1bc50d48.css",
+    "static/js/main.c824b5d5.js"
   ]
 }

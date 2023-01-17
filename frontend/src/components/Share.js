@@ -16,7 +16,7 @@ const Share = (props) => {
             </Button>
             <Collapse in={open} dimension="width">
                 <div id="share-collapse-icons" className='mt-1'>
-                    <div style={{width: '142px', marginLeft: '10px'}}>
+                    <div style={{width: '150px', marginLeft: '10px'}}>
                         <TwitterShareButton
                             title="You might find this interesting"
                             url={window.location.href} 

@@ -1,52 +1,78 @@
-import format from "number-format.js";
-import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { useEffect, useState } from "react";
+import { Line } from '@ant-design/plots';
 
 const StatsChart = ({ ctpStats, ctpGroup }) => {
 
-    const formatPrice = (price) => {
-        return format( "$#,###.##", price );
-    }
+    const [data, setData] = useState(null);
 
-    const formatDate = (date) => {
-        return new Date(date).toLocaleDateString()
-    }
+    useEffect(() => {
+        const stats = [];
+        if(ctpStats) {
+            if(ctpGroup === 'CTP50') {
+                ctpStats.forEach(item => {
+                    stats.push({
+                        created: item.created,
+                        value: item.CTP50,
+                        category: 'CTP50'
+                    });
+                    stats.push({
+                        created: item.created,
+                        value: item.BITCOIN,
+                        category: 'BITCOIN'
+                    });
+                    stats.push({
+                        created: item.created,
+                        value: item.ETHEREUM,
+                        category: 'ETHEREUM'
+                    });
+                });
+            } else {
+                ctpStats.forEach(item => {
+                    stats.push({
+                        created: item.created,
+                        value: item.CTP10,
+                        category: 'CTP10'
+                    });
+                    stats.push({
+                        created: item.created,
+                        value: item.BITCOIN,
+                        category: 'BITCOIN'
+                    });
+                    stats.push({
+                        created: item.created,
+                        value: item.ETHEREUM,
+                        category: 'ETHEREUM'
+                    });
+                });
+            }
+            setData(stats);
+        }
+    }, [ctpStats, ctpGroup]);
 
-    const formatTooltip = (value, name, props) => {
-        return formatPrice(value)
-    }
-
-    const formatTooltipLabel = (label) => {
-        return new Date(label).toLocaleString()
-    }
+    const config = {
+        data,
+        xField: 'created',
+        yField: 'value',
+        seriesField: 'category',
+        xAxis: {
+            type: 'time',
+        },
+        yAxis: {
+            label: {
+                formatter: (v) => `${v}`.replace(/\d{1,3}(?=(\d{3})+$)/g, (s) => `${s},`),
+            },
+        },
+    };
 
     return (
-        <ResponsiveContainer width="100%" height="100%" className="clearfix">
-            <LineChart
-                width={1200}
-                height={800}
-                data={ctpStats}
-                margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                }}
-                >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis tickFormatter={formatDate} dataKey="created" />
-                <YAxis tickFormatter={formatPrice} />
-                <Tooltip formatter={formatTooltip} labelFormatter={formatTooltipLabel} />
-                <Legend />
-                {
-                    ctpGroup === 'CTP10' ?
-                    <Line type="linear" dot={false} dataKey="CTP10" stroke="#82ca9d" strokeWidth={2} /> :
-                    <Line type="linear" dot={false} dataKey="CTP50" stroke="#82ca9d" strokeWidth={2} />
-                }
-                <Line type="linear" dot={false} dataKey="BITCOIN" stroke="#ffc658" />
-                <Line type="linear" dot={false} dataKey="ETHEREUM" stroke="#8884d8" />
-            </LineChart>
-        </ResponsiveContainer>
-    )
+        <>
+        {
+            data &&
+            <Line {...config} />
+        }
+        </>
+    );
+    
 }
 
 export default StatsChart;

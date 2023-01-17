@@ -136,6 +136,40 @@ const getCTPStatsHistory = asyncHandler( async (req, res) => {
     }
 } )
 
+const getCTPStatsHistoryNew = asyncHandler( async (req, res) => {
+    const { duration } = req.query || 14;
+    const currencies = await Currency.find({ coingecko_id: { $in: ['ethereum', 'bitcoin'] } })
+    const currencyIds = currencies.map(curr => { return curr._id })
+    const data = {}
+    try {
+        const today = new Date();
+        const priorDate = new Date(new Date().setDate(today.getDate() - parseInt(duration)));
+        const batches  = await Batch.find({ created: { $gte: priorDate } }, {}, { sort: { created: -1 } })
+        
+        batches.map(batch => {
+            data[batch._id] = {
+                created: batch.created,
+                CTP10: batch.ctp_value_10,
+                CTP50: batch.ctp_value_50
+            }
+        })
+        
+        const currencyStats = await Stats.find({ batch: { $in: Object.keys(data) }, currency: { $in: currencyIds } }).populate('currency').populate('batch')
+        const stats = [];
+        currencyStats.map(currency => {
+            data[currency.batch._id][currency.currency.coingecko_id.toUpperCase()] = currency.price
+        })
+
+        res.status(200).json(Object.values(data).sort(function(a, b) {
+            return a.created - b.created;
+        }))
+    } catch (error) {
+        console.log(error.message);
+        res.status(400)
+        throw new Error("Problem with getting currency stats 1")
+    }
+} )
+
 const getCTPStatsReturns = asyncHandler( async (req, res) => {
     const { duration } = req.query || 14;
     const currencies = await Currency.find({ coingecko_id: { $in: ['ethereum', 'bitcoin'] } })
@@ -304,5 +338,6 @@ module.exports = {
     getCurrencyStatsHistory,
     refreshCurrencyStats,
     getCTPStatsHistory,
+    getCTPStatsHistoryNew,
     getCTPStatsReturns
 }

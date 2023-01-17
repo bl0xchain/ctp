@@ -4,7 +4,6 @@ import axios from 'axios';
 import { NumericFormat } from "react-number-format";
 import { Link } from "react-router-dom";
 import Moment from 'react-moment';
-import format from 'number-format.js'
 import { FaFilePdf } from "react-icons/fa";
 import Returns from "../components/Returns";
 import Share from "../components/Share";
@@ -22,24 +21,6 @@ const Home = ({ setLogoColor }) => {
     const [ctp24Change50, setCtp24Change50] = useState('')
     const [currencyComposition, setCurrencyComposition] = useState(null)
     const [ctpComposition, setCtpComposition] = useState(null)
-
-    const formatPrice = (price) => {
-        return format( "$#,###.##", price );
-    }
-
-    const formatDate = (date) => {
-        return new Date(date).toLocaleDateString()
-    }
-
-    const formatTooltip = (value, name, props) => {
-        return formatPrice(value)
-    }
-
-    const formatTooltipLabel = (label) => {
-        return new Date(label).toLocaleString()
-    }
-
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -82,17 +63,42 @@ const Home = ({ setLogoColor }) => {
 
                 ctp_composition = Object.values(ctp_composition);
                 ctp_composition.map(item => {
-                    item.value = Math.round(item.value * 100) / 100
+                    item.value = Math.round(item.value * 10) / 10
                     return item
                 })
 
                 currency_stats = Object.values(currency_stats);
                 currency_stats.map(item => {
-                    item.value = Math.round(item.value * 100) / 100
+                    item.value = Math.round(item.value * 10) / 10
                     return item
                 })
 
-                
+                let totalStats = 0;
+                currency_stats.forEach(element => {
+                    if(element.name !== 'Other') {
+                        totalStats += element.value;
+                    }
+                });
+                currency_stats.map(item => {
+                    if(item.name === 'Other') {
+                        item.value = Math.round((100 - totalStats) * 10) / 10;
+                    }
+                    return item;
+                });
+
+                let totalcomp = 0;
+                ctp_composition.forEach(element => {
+                    if(element.name !== 'Token') {
+                        totalcomp += element.value;
+                    }
+                });
+                ctp_composition.map(item => {
+                    if(item.name === 'Token') {
+                        item.value = Math.round((100 - totalcomp) * 10) / 10;
+                    }
+                    return item;
+                });
+
                 setCurrencyComposition(currency_stats)
                 setCtpComposition(ctp_composition)
             }
@@ -107,7 +113,7 @@ const Home = ({ setLogoColor }) => {
         } else {
             setLogoColor((ctp24Change50 > 0) ? 'text-success' : 'text-danger');
         }
-    }, [ctp24Change10, ctp24Change50, ctpGroup])
+    }, [ctp24Change10, ctp24Change50, ctpGroup, setLogoColor])
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -127,12 +133,6 @@ const Home = ({ setLogoColor }) => {
         fetchStats()
     }, [duration])
 
-    const renderTooltip = (props) => (
-        <Tooltip id="button-tooltip" {...props}>
-          Simple tooltip
-        </Tooltip>
-      );
-
     return (
         <>
         
@@ -141,16 +141,16 @@ const Home = ({ setLogoColor }) => {
             {
                 batch &&
                 <Row className="pt-5 pb-5 align-items-center">
-                    <Col md="3">
+                    <Col md="4">
                         
-                        <h5 className="text-secondary">index value</h5>
-                        <h2 className="fs-1 fw-bold text-dark mb-4">
+                        <h3 className="">index value</h3>
+                        <h2 className="main-index ff-satoshi-black mb-4">
                             <NumericFormat 
                                 value={ctpGroup === 'CTP10' ? batch.ctp_value_10 : batch.ctp_value_50} 
                                 displayType={'text'} thousandSeparator={true} prefix={'$'} 
                                 decimalScale="2" decimalSeparator="." />
                         </h2>
-                        <div className="fs-5 mb-5">
+                        <div className="fs-4 mb-5">
                             <p className="d-inline-block me-4">
                             {
                                 ctpGroup === 'CTP10'?
@@ -182,8 +182,8 @@ const Home = ({ setLogoColor }) => {
                             <Share />
                         </div>
                     </Col>
-                    <Col md="9" className="ctp-graph-container mb-5">
-                        <Form className="ff-hoefler ctp-group mb-2 fs-3 text-secondary mb-4 text-center">
+                    <Col md="8">
+                        <Form className="ff-satoshi-black ctp-group mb-2 fs-2 mb-4 text-center">
                             <Form.Check 
                                 inline
                                 label="CTP10"
@@ -205,26 +205,27 @@ const Home = ({ setLogoColor }) => {
                                 checked={ctpGroup === 'CTP50' ? 'checked': ''}
                             />
                         </Form>
-                        <ButtonToolbar aria-label="Duration Selection" className="mb-2">
-                                <ButtonGroup aria-label="Basic example" className="text-end">
-                                    <Button variant={duration === 1 ? "secondary" : "light"} onClick={()=>setDuration(1)}>24h</Button>
-                                    <Button variant={duration === 7 ? "secondary" : "light"}  onClick={()=>setDuration(7)}>7d</Button>
-                                    <Button variant={duration === 14 ? "secondary" : "light"}  onClick={()=>setDuration(14)}>14d</Button>
-                                    <Button variant={duration === 30 ? "secondary" : "light"}  onClick={()=>setDuration(30)}>30d</Button>
-                                    <Button variant={duration === 90 ? "secondary" : "light"}  onClick={()=>setDuration(90)}>90d</Button>
-                                    <Button variant={duration === 180 ? "secondary" : "light"}  onClick={()=>setDuration(180)}>180d</Button>
-                                </ButtonGroup>
-                            </ButtonToolbar>
+                        <ButtonToolbar aria-label="Duration Selection" className="mb-4">
+                            <ButtonGroup aria-label="Basic example" className="text-end">
+                                <Button variant={duration === 1 ? "secondary" : "light"} onClick={()=>setDuration(1)}>24h</Button>
+                                <Button variant={duration === 7 ? "secondary" : "light"}  onClick={()=>setDuration(7)}>7d</Button>
+                                <Button variant={duration === 14 ? "secondary" : "light"}  onClick={()=>setDuration(14)}>14d</Button>
+                                <Button variant={duration === 30 ? "secondary" : "light"}  onClick={()=>setDuration(30)}>30d</Button>
+                                <Button variant={duration === 90 ? "secondary" : "light"}  onClick={()=>setDuration(90)}>90d</Button>
+                                <Button variant={duration === 180 ? "secondary" : "light"}  onClick={()=>setDuration(180)}>180d</Button>
+                            </ButtonGroup>
+                        </ButtonToolbar>
+                        <div className="ctp-graph-container">
                             <StatsChart ctpStats={ctpStats} ctpGroup={ctpGroup} />
-                        {
-                            ctpStatsLoading &&
-                            <div className="loading-container">
-                                <Spinner animation="grow" variant="primary" /> {" "}
-                                <Spinner animation="grow" variant="primary" /> {" "}
-                                <Spinner animation="grow" variant="primary" /> {" "}
-                            </div>
-                        }
-                        <div className="pb-5 clearfix"></div>
+                            {
+                                ctpStatsLoading &&
+                                <div className="loading-container">
+                                    <Spinner animation="grow" variant="primary" /> {" "}
+                                    <Spinner animation="grow" variant="primary" /> {" "}
+                                    <Spinner animation="grow" variant="primary" /> {" "}
+                                </div>
+                            }
+                        </div>
                     </Col>
                 </Row>
             }
@@ -235,7 +236,7 @@ const Home = ({ setLogoColor }) => {
             <Container className="pt-5 pb-5">
                 <Row>
                     <Col md="6">
-                        <h2 className="mb-3 fs-5 text-secondary">Ticker <span className="fs-2 ms-1  ff-hoefler-black text-dark">CTP</span></h2>
+                        <h2 className="mb-3 fs-5">Ticker <span className="fs-2 ms-1 ff-satoshi-black">CTP</span></h2>
                         <p className="pe-3">
                         The CTP is the index of the top cryptocurrencies based on deep research of the currencies in the emerging industry. CTP is an abbreviation for Coins, Tokens and Protocol which are the main elements for Cryptocurrencies. We update CTP with new elements as and when the market changes.
                         </p>
@@ -299,7 +300,7 @@ const Home = ({ setLogoColor }) => {
                     <Col sm="6" style={{height: '350px'}}>
                         <h4>CTP COMPOSITION</h4>
                         {
-                            ctpComposition && 
+                            ctpComposition &&
                             <StatsPieChart statsData={ctpComposition} />
                         }
                     </Col>
@@ -325,7 +326,7 @@ const Home = ({ setLogoColor }) => {
             <h2 className="mb-4">Portfolio Construction</h2>
             {
                 currencyStats &&
-                <Table responsive className="ctp-stats-table mb-5 text-center text-secondary">
+                <Table responsive className="ctp-stats-table mb-5 text-center">
                     <thead>
                         <tr>
                             <th className="text-start">Currency Name</th>

@@ -58,7 +58,7 @@ const Returns = () => {
                     assets.map(asset => {
                         return (
                             <tr key={asset}>
-                                <td className="ff-hoefler">{codes[asset]}</td>
+                                <td>{codes[asset]}</td>
                                 <td className={(data.current[asset] - data.day[asset] > 0) ? 'text-success' : 'text-danger'}>
                                     {getDifference(data.current[asset], data.day[asset])}%
                                 </td>
