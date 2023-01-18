@@ -296,7 +296,7 @@ const Home = ({ setLogoColor }) => {
             <Container className="pt-5 pb-5">
             {
                 currencyStats &&
-                <Row>
+                <Row className="mb-5">
                     <Col sm="6" style={{height: '350px'}}>
                         <h4>CTP COMPOSITION</h4>
                         {
@@ -314,12 +314,12 @@ const Home = ({ setLogoColor }) => {
                     </Col>
                 </Row>
             }
-                <div className="mt-5">
+                {/* <div className="mt-5">
                     <Button size="lg" disabled className="rounded-pill">
                         Buy CTP Index
                     </Button>
                     <p>Coming Soon</p>
-                </div>
+                </div> */}
             </Container>
         </div>
         <Container className="pt-5 pb-5">

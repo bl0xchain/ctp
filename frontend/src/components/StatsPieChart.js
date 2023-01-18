@@ -87,6 +87,10 @@ const StatsPieChart = ({ statsData }) => {
             type: 'pie-statistic-active',
           },
         ],
+        legend: {
+          layout: 'horizontal',
+          position: 'bottom'
+        }
     };
 
     return (

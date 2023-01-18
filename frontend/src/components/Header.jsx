@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Container, Nav, Navbar, Spinner } from "react-bootstrap";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Header = ({ logoColor }) => {
@@ -25,8 +26,10 @@ const Header = ({ logoColor }) => {
                         {
                             show &&
                             <div className="logo-notification">
-                                <Spinner animation="grow" size="sm" variant="warning" /> {" "}
-                                Red indicates down market and Green indicates up market
+                                <span className="tip"></span>
+                                {/* <Spinner animation="grow" size="sm" variant="warning" /> {" "} */}
+                                <span className="text-success">Green</span> indicates up market <FaArrowUp className="text-success" /> <br />
+                                <span className="text-danger">Red</span> indicates down market <FaArrowDown className="text-danger" />
                             </div>
                         }
                     </Link>

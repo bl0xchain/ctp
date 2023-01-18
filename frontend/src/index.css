@@ -205,6 +205,24 @@ h1, h2, h3, h4, h5, h6 {
 .logo-notification {
   position: absolute;
   left: 0px;
-  bottom: -15px;
+  bottom: -65px;
   font-size: 16px;
+  padding: 8px 12px;
+  background-color: #EFEFEF;
+  border-radius: 4px;
+}
+.logo-notification .tip {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  background: transparent;
+  border: 10px solid #EFEFEF;
+  top: -18px;
+  left: 30px;
+  border-right-color: transparent;
+  border-left-color: transparent;
+  border-top-color: transparent;
+}
+.g2-tooltip-value, .g2-tooltip-name, .g2-tooltip-title {
+  font-size: 18px;
 }
