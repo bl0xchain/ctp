@@ -226,3 +226,36 @@ h1, h2, h3, h4, h5, h6 {
 .g2-tooltip-value, .g2-tooltip-name, .g2-tooltip-title {
   font-size: 18px;
 }
+
+/* About */
+.about-banner {
+  position: relative;
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./images/skyscrapers-construction.jpg');
+  min-height: 400px;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* .about-banner:after {
+  content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #000000 ;
+    opacity: .6; 
+} */
+
+.about-banner div {
+  color: #FFF;
+}
+
+.about-banner h1 {
+  font-family: SatoshiBlack;
+  font-size: 60px;
+}

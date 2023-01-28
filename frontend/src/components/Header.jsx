@@ -14,7 +14,7 @@ const Header = ({ logoColor }) => {
     }, []);
 
     return (
-        <header className="mb-4">
+        <header className="mb-0">
             <Navbar variant="light" className="ff-satoshi">
                 <Container>
                     <Link to="/" className="navbar-brand">
