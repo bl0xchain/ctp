@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.9e22edb2.css",
-    "main.js": "/static/js/main.ef99d459.js",
+    "main.js": "/static/js/main.c0711087.js",
     "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
     "static/media/skyscrapers-construction.jpg": "/static/media/skyscrapers-construction.df760e77f2bee3556f9d.jpg",
     "static/media/sf-pro-display-bold.otf": "/static/media/sf-pro-display-bold.b1f4d2c69fa808ebca12.otf",
@@ -14,11 +14,11 @@
     "static/media/Satoshi-Black.otf": "/static/media/Satoshi-Black.d27fb329e3c56de46506.otf",
     "index.html": "/index.html",
     "main.9e22edb2.css.map": "/static/css/main.9e22edb2.css.map",
-    "main.ef99d459.js.map": "/static/js/main.ef99d459.js.map",
+    "main.c0711087.js.map": "/static/js/main.c0711087.js.map",
     "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.9e22edb2.css",
-    "static/js/main.ef99d459.js"
+    "static/js/main.c0711087.js"
   ]
 }

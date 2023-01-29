@@ -28,7 +28,8 @@ const About = () => {
             </Container>
             <div className="bg-light">
                 <Container className="py-5">
-                    <h2 className="mb-4">Investors can mint CTP10 or CTP50, much like they would with a traditional stock or mutual fund. </h2>
+                    <h2 className="mb-4">Benefits of CTP</h2>
+                    <p className="mb-4">Investors can mint CTP10 or CTP50, much like they would with a traditional stock or mutual fund. </p>
                     <p className="mb-4">One of the main benefits of a CTP10 or CTP50 is that it allows investors to gain exposure to a diverse range of cryptocurrencies, rather than having to pick and choose individual coins. This can help to mitigate risk and provide a more stable investment opportunity. Additionally, index funds generally have lower management fees than actively managed funds, making them more cost-efficient for investors.</p>
                     <p>Overall, a crypto index fund is a useful tool for investors looking to gain exposure to the cryptocurrency market, without the need for extensive research and analysis of individual</p>
                 </Container>
