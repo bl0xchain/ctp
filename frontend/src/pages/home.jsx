@@ -169,7 +169,7 @@ const Home = ({ setLogoColor }) => {
                             </p>
                             <p className="text-secondary d-inline-block">24 hrs</p>
                         </div>
-                        <OverlayTrigger
+                        {/* <OverlayTrigger
                             overlay={
                                 <Tooltip id="button-tooltip">
                                     Coming Soon
@@ -177,7 +177,8 @@ const Home = ({ setLogoColor }) => {
                             }
                         >
                             <Button className="fw-bold" size="lg">BUY CTP</Button>
-                        </OverlayTrigger>
+                        </OverlayTrigger> */}
+                        <Link to="/buy" className="btn btn-primary btn-lg">BUY CTP</Link>
                         <div className="mt-3">
                             <Share />
                         </div>
