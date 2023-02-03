@@ -5,6 +5,7 @@ const Currency = require('../models/currencyModel')
 const axios = require('axios')
 
 const getCurrencyStats = asyncHandler( async (req, res) => {
+    const { ctp_group } = req.params
     try {
         const batch  = await Batch.findOne({}, {}, { sort: { created: -1 } })
         let currencies_stats
@@ -18,6 +19,7 @@ const getCurrencyStats = asyncHandler( async (req, res) => {
         })
         
         updated_currency_stats = [];
+        const finalStats = {};
         currencies_stats.map(currency => {
             updated_currency_stats.push({
                 id: currency.currency._id,
@@ -30,15 +32,13 @@ const getCurrencyStats = asyncHandler( async (req, res) => {
                 price_change_24h: currency.price_change_percentage_24h,
                 weight: (currency.ff_mcap * 100 / total_freefloat * 100).toFixed()
             })
+            finalStats[currency.currency.symbol] = (currency.ff_mcap * 100 / total_freefloat * 100).toFixed();
         })
 
-        res.status(200).json({
-            CTP10: (batch.ctp_value_10 * 1000000).toFixed(),
-            CTP50: (batch.ctp_value_50 * 1000000).toFixed(), 
-            currencies:updated_currency_stats.sort(function(a, b) {
-                return b.market_cap - a.market_cap;
-            })
-        })
+
+        res.status(200).json(
+            finalStats
+        )
 
         // res.status(200).json({batch, currencies:updated_currency_stats.sort(function(a, b) {
         //     return b.market_cap - a.market_cap;
