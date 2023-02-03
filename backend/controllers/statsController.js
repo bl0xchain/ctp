@@ -19,7 +19,7 @@ const getCurrencyStats = asyncHandler( async (req, res) => {
         })
         
         updated_currency_stats = [];
-        const finalStats = {};
+        const finalStats = [];
         currencies_stats.map(currency => {
             updated_currency_stats.push({
                 id: currency.currency._id,
@@ -32,13 +32,13 @@ const getCurrencyStats = asyncHandler( async (req, res) => {
                 price_change_24h: currency.price_change_percentage_24h,
                 weight: (currency.ff_mcap * 100 / total_freefloat * 100).toFixed()
             })
-            finalStats[currency.currency.symbol] = parseInt((currency.ff_mcap * 100 / total_freefloat * 100).toFixed());
+            finalStats.push(parseInt((currency.ff_mcap * 100 / total_freefloat * 100).toFixed()));
         })
 
 
-        res.status(200).json(
-            finalStats
-        )
+        res.status(200).json({
+            data: finalStats
+        })
 
         // res.status(200).json({batch, currencies:updated_currency_stats.sort(function(a, b) {
         //     return b.market_cap - a.market_cap;
