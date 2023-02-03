@@ -4,6 +4,52 @@ const Stats = require('../models/statsModel')
 const Currency = require('../models/currencyModel')
 const axios = require('axios')
 
+const getCurrencyStats = asyncHandler( async (req, res) => {
+    try {
+        const batch  = await Batch.findOne({}, {}, { sort: { created: -1 } })
+        let currencies_stats
+        const currencies  = await Currency.find({ ctp_group: 'CTP10' })
+        const currency_ids = currencies.map((currency) => {return currency._id})
+        currencies_stats = await Stats.find({ batch: batch._id, currency: { $in: currency_ids } }).populate('currency').exec()
+        
+        let total_freefloat = 0;
+        currencies_stats.map(currency => {
+            total_freefloat += Number(currency.ff_mcap)
+        })
+        
+        updated_currency_stats = [];
+        currencies_stats.map(currency => {
+            updated_currency_stats.push({
+                id: currency.currency._id,
+                name: currency.currency.name,
+                symbol: currency.currency.symbol,
+                image: currency.currency.image,
+                category: currency.currency.category,
+                market_cap: currency.market_cap,
+                price: currency.price,
+                price_change_24h: currency.price_change_percentage_24h,
+                weight: (currency.ff_mcap * 100 / total_freefloat * 100).toFixed()
+            })
+        })
+
+        res.status(200).json({
+            CTP10: (batch.ctp_value_10 * 1000000).toFixed(),
+            CTP50: (batch.ctp_value_50 * 1000000).toFixed(), 
+            currencies:updated_currency_stats.sort(function(a, b) {
+                return b.market_cap - a.market_cap;
+            })
+        })
+
+        // res.status(200).json({batch, currencies:updated_currency_stats.sort(function(a, b) {
+        //     return b.market_cap - a.market_cap;
+        // })})
+    } catch (error) {
+        console.log(error.message)
+        res.status(400)
+        throw new Error("Problem with getting currency stats")
+    }
+} )
+
 const getCurrencyStatsByGroup = asyncHandler( async (req, res) => {
     const { ctp_group } = req.params
     try {
@@ -333,6 +379,7 @@ const refreshCurrencyStats = asyncHandler( async (req, res) => {
 
 module.exports = {
     calculateCTPForBatch,
+    getCurrencyStats,
     getCurrencyStatsByGroup,
     getCurrencyStatsByCurrency,
     getCurrencyStatsHistory,

@@ -1,10 +1,11 @@
 const express = require('express')
 const router = express.Router()
 const { getCurrencies, addCurrency, deleteCurrency, updateCurrency } = require('../controllers/currencyController')
-const { getCurrencyStatsByGroup, getCurrencyStatsByCurrency, getCurrencyStatsHistory, refreshCurrencyStats, getCTPStatsHistory, getCTPStatsHistoryNew, getCTPStatsReturns } = require('../controllers/statsController')
+const { getCurrencyStatsByGroup, getCurrencyStatsByCurrency, getCurrencyStatsHistory, refreshCurrencyStats, getCTPStatsHistory, getCTPStatsHistoryNew, getCTPStatsReturns, getCurrencyStats } = require('../controllers/statsController')
 
 router.route("/").get(getCurrencies).post(addCurrency)
 router.route("/:id").put(updateCurrency).delete(deleteCurrency)
+router.route("/stats").get(getCurrencyStats)
 router.route("/stats/:ctp_group").get(getCurrencyStatsByGroup)
 router.route("/data/:currency_id").get(getCurrencyStatsByCurrency)
 router.route("/history/:currency_id").get(getCurrencyStatsHistory)
