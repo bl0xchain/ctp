@@ -32,7 +32,7 @@ const getCurrencyStats = asyncHandler( async (req, res) => {
                 price_change_24h: currency.price_change_percentage_24h,
                 weight: (currency.ff_mcap * 100 / total_freefloat * 100).toFixed()
             })
-            finalStats[currency.currency.symbol] = (currency.ff_mcap * 100 / total_freefloat * 100).toFixed();
+            finalStats[currency.currency.symbol] = parseInt((currency.ff_mcap * 100 / total_freefloat * 100).toFixed());
         })
 
 
