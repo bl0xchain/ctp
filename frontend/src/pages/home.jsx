@@ -9,8 +9,9 @@ import Returns from "../components/Returns";
 import Share from "../components/Share";
 import StatsChart from "../components/StatsChart";
 import StatsPieChart from "../components/StatsPieChart";
+import Header from "../components/Header";
 
-const Home = ({ setLogoColor }) => {
+const Home = () => {
     const [ctpGroup, setCtpGroup] = useState('CTP10')
     const [batch, setBatch] = useState(null)
     const [currencyStats, setCurrencyStats] = useState([])
@@ -108,14 +109,6 @@ const Home = ({ setLogoColor }) => {
     }, [ctpGroup])
 
     useEffect(() => {
-        if(ctpGroup === 'CTP10') {
-            setLogoColor((ctp24Change10 > 0) ? 'text-success' : 'text-danger');
-        } else {
-            setLogoColor((ctp24Change50 > 0) ? 'text-success' : 'text-danger');
-        }
-    }, [ctp24Change10, ctp24Change50, ctpGroup, setLogoColor])
-
-    useEffect(() => {
         const fetchStats = async () => {
             setCtpStatsLoading(true)
             const ctpResponse = await axios.get('api/currencies/ctp-stats/', {params: {duration: duration}})
@@ -135,7 +128,7 @@ const Home = ({ setLogoColor }) => {
 
     return (
         <>
-        
+        <Header />
         <div className="mb-5">
             <Container style={{minHeight: '400px'}}>
             {

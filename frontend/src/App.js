@@ -10,15 +10,15 @@ import Home from './pages/home';
 
 
 function App() {
-    const [logoColor, setLogoColor] = useState("")
+    
 
     return (
         <>
             <Router>
                 <div className="ctp-index">
-                    <Header logoColor={logoColor} />
+                    
                     <Routes>
-                        <Route path='/' element={<Home setLogoColor={setLogoColor} />} />
+                        <Route path='/' element={<Home />} />
                         <Route path='/about' element={<About />} />
                         <Route path='/buy' element={<Buy />} />
                         <Route path='/currency/:id' element={<Currency />} />

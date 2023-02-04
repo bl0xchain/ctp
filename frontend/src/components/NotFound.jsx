@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
+import Header from "./Header";
 
 const NotFound = () => {
     return (
+        <>
+        <Header />
         <div className="d-flex text-center align-items-center" style={{minHeight: '500px'}} >
             <div className="w-100 h-100">
                 <h1 className="fs-1 fw-bold mb-3">404</h1>
@@ -11,6 +14,7 @@ const NotFound = () => {
                 </Link>
             </div>
         </div>
+        </>
     );
 }
 

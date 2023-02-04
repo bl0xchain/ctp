@@ -1,12 +1,25 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
-import { Container, Nav, Navbar, Spinner } from "react-bootstrap";
+import { Container, Nav, Navbar } from "react-bootstrap";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-const Header = ({ logoColor }) => {
+const Header = () => {
+    const [logoColor, setLogoColor] = useState("")
     const [show, setShow] = useState(true);
 
+    const getCtpChange = async() => {
+        const ctpResponse = await axios.get('api/currencies/ctp-stats/', {params: {duration: 14}});
+        if(ctpResponse.data) {
+            const ctp24ago = (ctpResponse.data.length > 24) ? ctpResponse.data[ctpResponse.data.length - 25] : ctpResponse.data[0];
+            const ctp24now = ctpResponse.data[ctpResponse.data.length - 1];
+            const diff10 = ctp24now.CTP10 - ctp24ago.CTP10;
+            setLogoColor((diff10 > 0) ? 'text-success' : 'text-danger');
+        }
+    }
+
     useEffect(() => {
+        getCtpChange();
         const timer = setTimeout(() => {
             setShow(false)
         }, 10000);

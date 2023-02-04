@@ -1,9 +1,11 @@
 import { Col, Container, Row } from "react-bootstrap";
+import Header from "../components/Header";
 import ctpImage from "../images/ctp-chart.jpg";
 
 const About = () => {
     return (
         <>
+        <Header />
             <div className="about-banner">
                 <div>
                     <h1 className="mb-4">CTP Index</h1>

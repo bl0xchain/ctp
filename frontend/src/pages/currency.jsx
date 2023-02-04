@@ -5,6 +5,7 @@ import { NumericFormat } from "react-number-format";
 import { useParams } from "react-router-dom";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import { Line } from '@ant-design/plots';
+import Header from "../components/Header";
 
 
 const Currency = () => {
@@ -50,6 +51,8 @@ const Currency = () => {
     };
 
     return (
+        <>
+        <Header />
         <Container>
             {
                 loading ?
@@ -130,6 +133,7 @@ const Currency = () => {
             </>
             }
         </Container>
+        </>
     )
 }
 

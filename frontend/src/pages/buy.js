@@ -2,10 +2,14 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import ctpTokenABI from "../abis/ctptoken-abi.json";
 import erc20ABI from "../abis/erc20-abi.json";
-import { Button, Container, Form, InputGroup } from "react-bootstrap";
+import { Badge, Button, Container, Form, InputGroup, Nav, Navbar, OverlayTrigger, Tooltip } from "react-bootstrap";
 import axios from "axios";
 import { NumericFormat } from "react-number-format";
 import format from "number-format.js";
+import { Link } from "react-router-dom";
+import { FaUnlink } from "react-icons/fa";
+import TokenItem from "../components/TokenItem";
+import ctpServices from "../services/ctp-services";
 
 const CONTRACT_ADDRESS = '0xaCF1421e0BABb9C0Da6eBA904224B0AeCeCd1084';
 const USDC_ADDRESS = '0x98339D8C260052B7ad81c28c16C0b98420f2B46a';
@@ -18,6 +22,7 @@ const Buy = () => {
     const [usdcAmount, setUsdcAmount] = useState("");
     const [ctpAmount, setCtpAmount] = useState("");
     const [buying, setBuying] = useState(false);
+    const [componentCount, setComponentCount] = useState(10);
     
     const connectWallet = async () => {
 		try {
@@ -106,6 +111,10 @@ const Buy = () => {
         setCtpAmount((e.target.value) / ctpValue);
     }
 
+    const getShortAddress = (address) => {
+        return String(address).substring(0, 6) + "..." + String(address).substring(38)
+    }
+
     useEffect(() => {
 		if(currentAccount !== "" && chainId === "0x5") {
             getCtpBalance();
@@ -116,10 +125,46 @@ const Buy = () => {
 		checkIfWalletIsConnected();
         getCtpValue();
 	}, [])
+
+
     
     return (
+        <>
+        <header className="mb-0">
+            <Navbar variant="light" className="ff-satoshi">
+                <Container>
+                    <Link to="/" className="navbar-brand">
+                        <h2 className={"text-success ff-satoshi-black"}>
+                            CTP
+                            <span className="ff-sf-pro">Index</span>
+                        </h2>
+                    </Link>
+                    <Nav className="d-flex">
+                    {
+                        currentAccount === "" ?
+                        <Button onClick={connectWallet}>Connect Wallet</Button> :
+                        <>
+                        {
+                            chainId === '0x5' ?
+                            <>Connected: {getShortAddress(currentAccount)}</> :
+                            <OverlayTrigger
+                                placement="bottom"
+                                overlay={<Tooltip>Connect to Goerli Testnet</Tooltip>}
+                            >
+                                <Badge pill bg="danger" text="light">
+                                    <FaUnlink /> { " " }
+                                    Wrong Network
+                                </Badge>
+                            </OverlayTrigger>
+                        }
+                        </>
+                    }
+                    </Nav>
+                </Container>
+            </Navbar>
+        </header>
         <Container className="py-5" style={{minHeight: 'calc(100vh - 221px)'}}>
-            <h1 className="text-center mb-5">BUY CTP</h1>
+            <h1 className="text-center mb-5">BUY CTP10</h1>
             {
                 ctpValue &&
                 <h2 className="text-center mb-4 text-primary ff-satoshi-black">
@@ -138,7 +183,6 @@ const Buy = () => {
                     <Button onClick={connectWallet}>Connect Wallet</Button>
                 </> :
                 <>
-                    <p className="mb-4">Connected: {currentAccount}</p>
                     {
                         chainId === '0x5' ?
                         <>
@@ -160,8 +204,18 @@ const Buy = () => {
                     
                 </>
             }
-            </div>  
+            </div>
+            <div>
+                {
+                    [...Array(componentCount)].map((x, i) => <TokenItem key={i} index={i} />)
+                }
+            </div>
+            <p className="text-center fs-6 mt-5">
+                You are interacting with contract {" "}
+                <a href={"https://goerli.etherscan.io/address/"+CONTRACT_ADDRESS} target="_blank" rel="noreferrer">{CONTRACT_ADDRESS}</a>
+            </p>
         </Container>
+        </>
     )
 }
 
