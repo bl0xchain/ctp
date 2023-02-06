@@ -171,7 +171,7 @@ const Home = () => {
                         >
                             <Button className="fw-bold" size="lg">BUY CTP</Button>
                         </OverlayTrigger> */}
-                        <Link to="/buy" className="btn btn-primary btn-lg">BUY CTP</Link>
+                        <Link to="/buy" className="btn btn-primary btn-lg">BUY CTP10</Link>
                         <div className="mt-3">
                             <Share />
                         </div>

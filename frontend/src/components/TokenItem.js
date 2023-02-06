@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
 import ctpServices from "../services/ctp-services";
  
 const TokenItem = ({index}) => {
@@ -7,7 +6,6 @@ const TokenItem = ({index}) => {
 
     const getToken = async() => {
         const tokenDetails = await ctpServices.getComponent(index);
-        console.log(tokenDetails);
         setToken(tokenDetails);
     }
 
@@ -18,18 +16,18 @@ const TokenItem = ({index}) => {
         <>
         {
             token &&
-            <Row>
-                <Col>{token.index + 1}</Col>
-                <Col>
+            <tr>
+                <td>{token.index + 1}</td>
+                <td>
                     <a href={"https://goerli.etherscan.io/token/"+token.address} target="_blank" rel="noreferrer">{token.name}</a>
-                </Col>
-                <Col>
+                </td>
+                <td>
                     {token.symbol}
-                </Col>
-                <Col>
+                </td>
+                <td className="text-end">
                     { token.composition / 100 }%
-                </Col>
-            </Row>
+                </td>
+            </tr>
         }
         </>
     )

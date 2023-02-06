@@ -1,18 +1,11 @@
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import ctpTokenABI from "../abis/ctptoken-abi.json";
-import erc20ABI from "../abis/erc20-abi.json";
-import { Badge, Button, Container, Form, InputGroup, Nav, Navbar, OverlayTrigger, Tooltip } from "react-bootstrap";
-import axios from "axios";
+import { Badge, Button, Container, Form, InputGroup, Nav, Navbar, OverlayTrigger, Spinner, Tooltip } from "react-bootstrap";
 import { NumericFormat } from "react-number-format";
-import format from "number-format.js";
 import { Link } from "react-router-dom";
 import { FaUnlink } from "react-icons/fa";
 import TokenItem from "../components/TokenItem";
-import ctpServices from "../services/ctp-services";
-
-const CONTRACT_ADDRESS = '0xaCF1421e0BABb9C0Da6eBA904224B0AeCeCd1084';
-const USDC_ADDRESS = '0x98339D8C260052B7ad81c28c16C0b98420f2B46a';
+import ctpServices, { ctpContractAddress } from "../services/ctp-services";
 
 const Buy = () => {
     const [currentAccount, setCurrentAccount] = useState('');
@@ -22,7 +15,9 @@ const Buy = () => {
     const [usdcAmount, setUsdcAmount] = useState("");
     const [ctpAmount, setCtpAmount] = useState("");
     const [buying, setBuying] = useState(false);
-    const [componentCount, setComponentCount] = useState(10);
+    const [componentCount, setComponentCount] = useState(0);
+    const [message, setMessage] = useState("");
+    const [error, setError] = useState("");
     
     const connectWallet = async () => {
 		try {
@@ -64,46 +59,34 @@ const Buy = () => {
 		}
 	}
 
-    const getContract = async () => {
-        if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
-            // const provider = new ethers.providers.Web3Provider(ethereum);
-            const provider = new ethers.providers.Web3Provider(window.ethereum)
-            const signer = provider.getSigner();
-            return new ethers.Contract(CONTRACT_ADDRESS, ctpTokenABI, signer);
-        } else {
-            return false;
-        }
-    }
-
     const getCtpBalance = async() => {
-        const contract = await getContract();
-        const balance = await contract.balanceOf(currentAccount);
-        setCtpBalance(ethers.utils.formatUnits(balance, 18));
+        const balance = await ctpServices.getCtpBalance(currentAccount);
+        setCtpBalance(balance);
     }
 
     const buyCtp = async() => {
-        if (typeof window !== 'undefined' && typeof window.ethereum !== 'undefined') {
+        setError("");
+        setMessage("");
+        if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
             setBuying(true);
-            const contract = await getContract();
-            const provider = new ethers.providers.Web3Provider(window.ethereum)
-            const signer = provider.getSigner();
-            const usdcContract = new ethers.Contract(USDC_ADDRESS, erc20ABI, signer);
-            let tx = await usdcContract.approve(CONTRACT_ADDRESS, ethers.utils.parseUnits(usdcAmount, 6));
-            await tx.wait();
-            tx = await contract.buy(ethers.utils.parseUnits(usdcAmount, 6));
-            await tx.wait();
-            setUsdcAmount("");
-            setCtpAmount("");
+            const response = await ctpServices.buyctp(currentAccount, usdcAmount);
+            if(response.code === 200) {
+                setMessage("CTP10 buy successful.");
+                setUsdcAmount("");
+                setCtpAmount("");
+                setError("");
+                getCtpBalance();
+            } else {
+                setError("Problem with buying CTP10.");
+                setMessage("");
+            }
             setBuying(false);
-
         }
     }
 
     const getCtpValue = async() => {
-        const response = await axios.get('api/currencies/stats/CTP10')
-        if(response.data) {
-            setCtpValue(response.data.batch.ctp_value_10);
-        }
+        const ctpPrice = await ctpServices.getCtpPrice();
+        setCtpValue(ethers.utils.formatUnits(ctpPrice, 6));
     }
 
     const onUsdcChange = (e) => {
@@ -115,6 +98,11 @@ const Buy = () => {
         return String(address).substring(0, 6) + "..." + String(address).substring(38)
     }
 
+    const getComponentCount = async() => {
+        const count = await ctpServices.getComponentCount();
+        setComponentCount(count);
+    }
+
     useEffect(() => {
 		if(currentAccount !== "" && chainId === "0x5") {
             getCtpBalance();
@@ -124,6 +112,7 @@ const Buy = () => {
     useEffect(() => {
 		checkIfWalletIsConnected();
         getCtpValue();
+        getComponentCount();
 	}, [])
 
 
@@ -167,11 +156,11 @@ const Buy = () => {
             <h1 className="text-center mb-5">BUY CTP10</h1>
             {
                 ctpValue &&
-                <h2 className="text-center mb-4 text-primary ff-satoshi-black">
+                <h2 className="text-center mb-4 text-primary ff-satoshi-black fs-1">
                     <NumericFormat 
                     value={ctpValue} 
                     displayType={'text'} thousandSeparator={true} prefix={'$'} 
-                    decimalScale="2" decimalSeparator="." />
+                    decimalScale="6" decimalSeparator="." />
                 </h2>
             }
             
@@ -179,7 +168,7 @@ const Buy = () => {
             {
                 currentAccount === "" ?
                 <>
-                    <h3 className="mb-4">Connect wallet to Buy and Manage CTP</h3>
+                    <h3 className="mb-4">Connect wallet to Buy and Manage CTP10</h3>
                     <Button onClick={connectWallet}>Connect Wallet</Button>
                 </> :
                 <>
@@ -192,12 +181,23 @@ const Buy = () => {
                             <Form.Control
                                 placeholder="Amount in USDC"
                                 aria-label="Amount in USDC"
+                                value={usdcAmount}
                                 onChange={onUsdcChange}
                             />
-                            <Button variant="outline-secondary" onClick={buyCtp}>
-                                BUY {ctpAmount && ctpAmount.toFixed(4)} CTP
-                            </Button>
+                            {
+                                buying ?
+                                <Button variant="outline-primary" disabled>
+                                    BUYING {ctpAmount && ctpAmount.toFixed(4)} CTP10 {" "}
+                                    <Spinner size="sm" animation="border" />
+                                </Button> :
+                                <Button variant="outline-primary" onClick={buyCtp}>
+                                    BUY {ctpAmount && ctpAmount.toFixed(4)} CTP10
+                                </Button>
+                            }
+                            
                         </InputGroup>
+                        <p className="text-success">{message}</p>
+                        <p className="text-danger">{error}</p>
                         </> :
                         <p className="text-danger mb-4">Please change the network to Goerli TestNet</p>
                     }
@@ -205,14 +205,17 @@ const Buy = () => {
                 </>
             }
             </div>
-            <div>
-                {
-                    [...Array(componentCount)].map((x, i) => <TokenItem key={i} index={i} />)
-                }
+            <div className="fs-5" style={{margin: '0 auto', maxWidth: '450px'}}>
+                <p>1 CTP10 is composed of the following token</p>
+                <table className="table">
+                    { componentCount > 0 &&
+                        [...Array(componentCount)].map((x, i) => <TokenItem key={i} index={i} />)
+                    }
+                </table>
             </div>
             <p className="text-center fs-6 mt-5">
                 You are interacting with contract {" "}
-                <a href={"https://goerli.etherscan.io/address/"+CONTRACT_ADDRESS} target="_blank" rel="noreferrer">{CONTRACT_ADDRESS}</a>
+                <a href={"https://goerli.etherscan.io/address/"+ctpContractAddress} target="_blank" rel="noreferrer">{ctpContractAddress}</a>
             </p>
         </Container>
         </>
