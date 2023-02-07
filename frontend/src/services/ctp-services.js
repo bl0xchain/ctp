@@ -84,6 +84,23 @@ class CtpServices {
             };
         }
     }
+
+    async unwrap(address, amount) {
+        try {
+            await ctpContract.methods.unwrap(ethers.utils.parseUnits(amount, 18)).send({
+                from: address,
+                value: 0
+            });
+            return {
+                code: 200
+            }
+        } catch (error) {
+            console.log(error)
+            return {
+                code: 403
+            };
+        }
+    }
 }
 
 export default new CtpServices();

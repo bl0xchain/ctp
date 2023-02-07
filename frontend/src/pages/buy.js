@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { FaUnlink } from "react-icons/fa";
 import TokenItem from "../components/TokenItem";
 import ctpServices, { ctpContractAddress } from "../services/ctp-services";
+import Unwrap from "../components/Unwrap";
 
 const Buy = () => {
     const [currentAccount, setCurrentAccount] = useState('');
@@ -175,7 +176,10 @@ const Buy = () => {
                     {
                         chainId === '0x5' ?
                         <>
-                        <p className="mb-5">Your CTP Balance: {ctpBalance}</p>
+                        <div className="mb-5">
+                            <p className="mb-2">Your CTP Balance: {ctpBalance}</p>
+                            <Unwrap currentAccount={currentAccount} ctpBalance={ctpBalance} getCtpBalance={getCtpBalance} />
+                        </div>
                         <InputGroup className="mb-3" style={{maxWidth: '500px', margin: '0 auto'}}>
                             <InputGroup.Text>USDC</InputGroup.Text>
                             <Form.Control
