@@ -3,7 +3,7 @@ import ctpTokenABI from "../abis/ctptoken-abi.json";
 import erc20ABI from "../abis/erc20-abi.json";
 import { ethers } from "ethers";
 
-export const ctpContractAddress = '0x97b779BCA5b963D19eBD936f2e2A9Fdf710b81e7';
+export const ctpContractAddress = '0x72Ee23fFBa6d20D4eA6BD5f850BdB16e3c0309e7';
 export const usdcContractAddress = '0x98339D8C260052B7ad81c28c16C0b98420f2B46a';
 
 export const ctpContract = new web3.eth.Contract(
@@ -36,6 +36,11 @@ class CtpServices {
     async getCtpBalance(address) {
         const balance = await ctpContract.methods.balanceOf(address).call();
         return parseFloat(ethers.utils.formatEther(balance));
+    }
+
+    async getUpdated(address) {
+        const updated = await ctpContract.methods.ctpDataUpdated().call();
+        return updated;
     }
 
     async getComponent(index) {

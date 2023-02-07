@@ -7,6 +7,7 @@ import { FaUnlink } from "react-icons/fa";
 import TokenItem from "../components/TokenItem";
 import ctpServices, { ctpContractAddress } from "../services/ctp-services";
 import Unwrap from "../components/Unwrap";
+import Moment from "react-moment";
 
 const Buy = () => {
     const [currentAccount, setCurrentAccount] = useState('');
@@ -19,6 +20,7 @@ const Buy = () => {
     const [componentCount, setComponentCount] = useState(0);
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+    const [updated, setUpdated] = useState("");
     
     const connectWallet = async () => {
 		try {
@@ -88,6 +90,8 @@ const Buy = () => {
     const getCtpValue = async() => {
         const ctpPrice = await ctpServices.getCtpPrice();
         setCtpValue(ethers.utils.formatUnits(ctpPrice, 6));
+        const ctpUpdated = await ctpServices.getUpdated();
+        setUpdated(parseInt(ctpUpdated) * 1000);
     }
 
     const onUsdcChange = (e) => {
@@ -114,6 +118,7 @@ const Buy = () => {
 		checkIfWalletIsConnected();
         getCtpValue();
         getComponentCount();
+
 	}, [])
 
 
@@ -195,7 +200,7 @@ const Buy = () => {
                                     <Spinner size="sm" animation="border" />
                                 </Button> :
                                 <Button variant="outline-primary" onClick={buyCtp}>
-                                    BUY {ctpAmount && ctpAmount.toFixed(4)} CTP10
+                                    BUY {ctpAmount && ctpAmount.toFixed(4)} CTP10 on Uniswap
                                 </Button>
                             }
                             
@@ -217,6 +222,14 @@ const Buy = () => {
                     }
                 </table>
             </div>
+            <p className="text-center mt-5">
+                Contract CTP Data Updated on : {" "}
+                    { updated && 
+                        <Moment format="MMMM Do YYYY, h:mm:ss a" className="fw-bold">
+                            { updated }
+                        </Moment>
+                    }
+            </p>
             <p className="text-center fs-6 mt-5">
                 You are interacting with contract {" "}
                 <a href={"https://goerli.etherscan.io/address/"+ctpContractAddress} target="_blank" rel="noreferrer">{ctpContractAddress}</a>
