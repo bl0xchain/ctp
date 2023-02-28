@@ -1,8 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.9e22edb2.css",
-    "main.js": "/static/js/main.912c229d.js",
-    "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
+    "main.css": "/static/css/main.e71e4bae.css",
+    "main.js": "/static/js/main.e3ca2024.js",
     "static/media/skyscrapers-construction.jpg": "/static/media/skyscrapers-construction.df760e77f2bee3556f9d.jpg",
     "static/media/sf-pro-display-bold.otf": "/static/media/sf-pro-display-bold.b1f4d2c69fa808ebca12.otf",
     "static/media/sf-pro-display.otf": "/static/media/sf-pro-display.d1f5e6e16dd4f75c3950.otf",
@@ -13,12 +12,11 @@
     "static/media/Satoshi-Regular.otf": "/static/media/Satoshi-Regular.811ccb0b5af1892a71df.otf",
     "static/media/Satoshi-Black.otf": "/static/media/Satoshi-Black.d27fb329e3c56de46506.otf",
     "index.html": "/index.html",
-    "main.9e22edb2.css.map": "/static/css/main.9e22edb2.css.map",
-    "main.912c229d.js.map": "/static/js/main.912c229d.js.map",
-    "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
+    "main.e71e4bae.css.map": "/static/css/main.e71e4bae.css.map",
+    "main.e3ca2024.js.map": "/static/js/main.e3ca2024.js.map"
   },
   "entrypoints": [
-    "static/css/main.9e22edb2.css",
-    "static/js/main.912c229d.js"
+    "static/css/main.e71e4bae.css",
+    "static/js/main.e3ca2024.js"
   ]
 }

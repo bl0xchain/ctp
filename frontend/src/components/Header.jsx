@@ -1,12 +1,17 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { logout } from "../features/auth/authSlice";
 
 const Header = () => {
     const [logoColor, setLogoColor] = useState("")
     const [show, setShow] = useState(true);
+
+    const dispatch = useDispatch()
+    const { user } = useSelector( (state) => state.auth )
 
     const getCtpChange = async() => {
         const ctpResponse = await axios.get('api/currencies/ctp-stats/', {params: {duration: 14}});
@@ -16,6 +21,10 @@ const Header = () => {
             const diff10 = ctp24now.CTP10 - ctp24ago.CTP10;
             setLogoColor((diff10 > 0) ? 'text-success' : 'text-danger');
         }
+    }
+
+    const handleLogout = async() => {
+        dispatch(logout())
     }
 
     useEffect(() => {
@@ -52,6 +61,10 @@ const Header = () => {
                             <Link to="/" className="nav-link">Home</Link>
                             <Link to="/about" className="nav-link">About</Link>
                             <Link to="/research" className="nav-link">Research</Link>
+                            {
+                                user &&
+                                <Button variant="outline-secondary" className="nav-link" onClick={handleLogout}>Logout</Button>
+                            }
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
