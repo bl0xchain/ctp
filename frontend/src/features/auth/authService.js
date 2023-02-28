@@ -12,6 +12,16 @@ const register = async(userData) => {
     return response.data
 }
 
+const createUser = async(userData, token) => {
+    const config = {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    }
+    const response = await axios.post(API_URL, userData, config)
+    return response.data
+}
+
 const login = async(userData) => {
     const response = await axios.post(API_URL + '/login', userData)
     if(response.data) {
@@ -27,7 +37,8 @@ const logout = () => {
 const authService = {
     register,
     login,
-    logout
+    logout,
+    createUser
 }
 
 export default authService

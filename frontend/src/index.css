@@ -259,3 +259,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: SatoshiBlack;
   font-size: 60px;
 }
+
+.btn.nav-link:focus, .btn.nav-link:hover {
+  color: var(--bs-btn-hover-color) !important;
+}

@@ -8,6 +8,7 @@ import Buy from './pages/buy';
 import Currency from './pages/currency';
 import Home from './pages/home';
 import CreateUser from './pages/create-user';
+import ManageCurrencies from './pages/manage-currencies';
 
 function App() {
     
@@ -21,6 +22,7 @@ function App() {
                         <Route path='/buy' element={<Buy />} />
                         <Route path='/currency/:id' element={<Currency />} />
                         <Route path='/create-user' element={<CreateUser />} />
+                        <Route path='/manage-currencies' element={<ManageCurrencies />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                     <Footer />

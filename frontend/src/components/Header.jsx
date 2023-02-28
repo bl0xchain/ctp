@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Button, Container, Nav, Navbar } from "react-bootstrap";
+import { Button, Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -58,9 +58,30 @@ const Header = () => {
                     <Navbar.Toggle aria-controls="navbarScroll" />
                     <Navbar.Collapse id="navbarScroll" className="justify-content-end fs-5">
                         <Nav className="d-flex">
-                            <Link to="/" className="nav-link">Home</Link>
-                            <Link to="/about" className="nav-link">About</Link>
-                            <Link to="/research" className="nav-link">Research</Link>
+                            <li className="nav-item">
+                                <Link to="/" className="nav-link">Home</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/about" className="nav-link">About</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/research" className="nav-link">Research</Link>
+                            </li>
+                            {
+                                (user && user.isAdmin) &&
+                                <NavDropdown title="Admin" id="basic-nav-dropdown">
+                                    <li>
+                                        <Link to='/manage-currencies' className="dropdown-item">
+                                            Manage Currencies
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to='/create-user' className="dropdown-item">
+                                            Create User
+                                        </Link>
+                                    </li>
+                                </NavDropdown>
+                            }
                             {
                                 user &&
                                 <Button variant="outline-secondary" className="nav-link" onClick={handleLogout}>Logout</Button>
