@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react"
-import { Button, Col, Container, Form, Modal, Row, Table } from "react-bootstrap"
+import { Button, Col, Container, Form, Row, Table } from "react-bootstrap"
 import Header from "../components/Header"
 import currencyService from "../features/currency/currencyService"
 import { useSelector } from "react-redux"
 import Login from "../components/Login"
 import NotAllowed from "../components/NotAllowed"
 import AddCurrency from "../components/currency/AddCurrency"
+import { FaEdit, FaTrashAlt } from "react-icons/fa"
+import EditCurrency from "../components/currency/EditCurrency"
+import DeleteCurrency from "../components/currency/DeleteCurrency"
 
 const ManageCurrencies = () => {
     const [data, setData] = useState(null)
@@ -15,6 +18,9 @@ const ManageCurrencies = () => {
         group: ""
     })
     const [addShow, setAddShow] = useState(false)
+    const [editShow, setEditShow] = useState(false)
+    const [deleteShow, setDeleteShow] = useState(false)
+    const [activeCurrency, setActiveCurrency] = useState(null)
 
     const { user } = useSelector((state) => state.auth)
 
@@ -25,9 +31,24 @@ const ManageCurrencies = () => {
         }))
     }
 
+    const handleEdit = (index) => {
+        setActiveCurrency(filteredData[index])
+        setEditShow(true)
+    }
+
+    const handleDelete = (index) => {
+        setActiveCurrency(filteredData[index])
+        setDeleteShow(true)
+    }
+
     const loadCurrencies = async () => {
+        setActiveCurrency(null)
+        setAddShow(false)
+        setEditShow(false)
+        setDeleteShow(false)
         const currencies = await currencyService.getCurrencies()
         setData(currencies)
+
     }
 
     useEffect(() => {
@@ -102,11 +123,12 @@ const ManageCurrencies = () => {
                                                 <th>total_supply</th>
                                                 <th>ff_assumption</th>
                                                 <th>ctp_group</th>
+                                                <th>actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {
-                                                filteredData.map((currency) => (
+                                                filteredData.map((currency, index) => (
                                                     <tr key={currency._id}>
                                                         <td>{currency.coingecko_id}</td>
                                                         <td>{currency.name}</td>
@@ -118,12 +140,18 @@ const ManageCurrencies = () => {
                                                         <td>{currency.total_supply}</td>
                                                         <td>{currency.ff_assumption}</td>
                                                         <td>{currency.ctp_group}</td>
+                                                        <td>
+                                                            <FaEdit className="currency-action" onClick={() => handleEdit(index)} /> {" "}
+                                                            <FaTrashAlt className="currency-action" onClick={() =>handleDelete(index)} />
+                                                        </td>
                                                     </tr>
                                                 ))
                                             }
                                         </tbody>
                                     </Table>
                                     <AddCurrency show={addShow} setShow={setAddShow} loadData={loadCurrencies} />
+                                    <EditCurrency show={editShow} setShow={setEditShow} loadData={loadCurrencies} currency={activeCurrency} />
+                                    <DeleteCurrency show={deleteShow} setShow={setDeleteShow} loadData={loadCurrencies} currency={activeCurrency} />
                                 </>} 
                             </> :
                             <NotAllowed />

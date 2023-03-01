@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState } from "react";
 import { Button, Col, Form, Modal, Row, Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
@@ -34,8 +33,8 @@ const AddCurrency = ({ show, setShow, loadData }) => {
 
     const handleAddCurrency = async(e) => {
         e.preventDefault();
-        if(formData.coingecko_id === "" || formData.name === "" || formData.symbol === "" || formData.image === "" || formData.category === "" || formData.total_supply === "" || formData.ff_assumption === "" || formData.ctp_group === "") {
-            toast.error("All fields are compulsory", {
+        if(formData.coingecko_id === "" || formData.name === "" || formData.symbol === "" || formData.image === "" || formData.category === "" || formData.ff_assumption === "" || formData.ctp_group === "") {
+            toast.error("Fields marked with * are compulsory", {
                 position: toast.POSITION.TOP_CENTER
             })
             return false
@@ -50,7 +49,7 @@ const AddCurrency = ({ show, setShow, loadData }) => {
             setFormData(initialData)
             loadData()
         } catch (error) {
-            toast.error("Cannot Add this Currecy", {
+            toast.error("Cannot Add this Currency", {
                 position: toast.POSITION.TOP_CENTER
             })
         }
@@ -71,7 +70,7 @@ const AddCurrency = ({ show, setShow, loadData }) => {
                 <Form className="fs-6">
                     <Form.Group as={Row} className="mb-3 align-items-center" controlId="coingecko-id">
                         <Form.Label column sm={4}>
-                            Coingecko Id
+                            Coingecko Id *
                         </Form.Label>
                         <Col sm={8}>
                             <Form.Control type="text" name="coingecko_id" value={formData.coingecko_id} onChange={handleDataChange} />
@@ -79,7 +78,7 @@ const AddCurrency = ({ show, setShow, loadData }) => {
                     </Form.Group>
                     <Form.Group as={Row} className="mb-3 align-items-center" controlId="name">
                         <Form.Label column sm={4}>
-                            Name
+                            Name *
                         </Form.Label>
                         <Col sm={8}>
                             <Form.Control type="text" name="name" value={formData.name} onChange={handleDataChange} />
@@ -87,7 +86,7 @@ const AddCurrency = ({ show, setShow, loadData }) => {
                     </Form.Group>
                     <Form.Group as={Row} className="mb-3 align-items-center" controlId="symbol">
                         <Form.Label column sm={4}>
-                            Symbol
+                            Symbol *
                         </Form.Label>
                         <Col sm={8}>
                             <Form.Control type="text" name="symbol" value={formData.symbol} onChange={handleDataChange} />
@@ -95,7 +94,7 @@ const AddCurrency = ({ show, setShow, loadData }) => {
                     </Form.Group>
                     <Form.Group as={Row} className="mb-3 align-items-center" controlId="image">
                         <Form.Label column sm={4}>
-                            Image
+                            Image *
                         </Form.Label>
                         <Col sm={8}>
                             <Form.Control type="url" name="image" value={formData.image} onChange={handleDataChange} />
@@ -103,7 +102,7 @@ const AddCurrency = ({ show, setShow, loadData }) => {
                     </Form.Group>
                     <Form.Group as={Row} className="mb-3 align-items-center">
                         <Form.Label as="legend" column sm={4}>
-                            Category
+                            Category *
                         </Form.Label>
                         <Col sm={8} onChange={handleDataChange}>
                             <Form.Check type="radio" label="C" name="category" id="category-c" value="C" inline />
@@ -121,7 +120,7 @@ const AddCurrency = ({ show, setShow, loadData }) => {
                     </Form.Group>
                     <Form.Group as={Row} className="mb-3 align-items-center" controlId="ff-assumption">
                         <Form.Label column sm={4}>
-                            FF Assumption
+                            FF Assumption *
                         </Form.Label>
                         <Col sm={8}>
                             <Form.Control type="number" name="ff_assumption" value={formData.ff_assumption} onChange={handleDataChange} />
@@ -129,11 +128,12 @@ const AddCurrency = ({ show, setShow, loadData }) => {
                     </Form.Group>
                     <Form.Group as={Row} className="mb-3 align-items-center">
                         <Form.Label as="legend" column sm={4}>
-                            CTP Group
+                            CTP Group *
                         </Form.Label>
                         <Col sm={8} onChange={handleDataChange}>
-                            <Form.Check type="radio" label="CTP10" name="ctp_group" id="category-ctp10" value="CTP10" inline />
-                            <Form.Check type="radio" label="CTP50" name="ctp_group" id="category-ctp50" value="CTP50" inline />
+                            <Form.Check type="radio" label="CTP10" name="ctp_group" id="group-ctp10" value="CTP10" inline />
+                            <Form.Check type="radio" label="CTP50" name="ctp_group" id="group-ctp50" value="CTP50" inline />
+                            <Form.Check type="radio" label="Extra" name="ctp_group" id="group-extra" value="Extra" inline />
                         </Col>
                     </Form.Group>
                 </Form>

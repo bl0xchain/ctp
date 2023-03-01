@@ -55,13 +55,14 @@ const getCurrencyStatsByGroup = asyncHandler( async (req, res) => {
     try {
         const batch  = await Batch.findOne({}, {}, { sort: { created: -1 } })
         let currencies_stats
-        if(ctp_group === 'CTP10') {
-            const currencies  = await Currency.find({ ctp_group })
-            const currency_ids = currencies.map((currency) => {return currency._id})
-            currencies_stats = await Stats.find({ batch: batch._id, currency: { $in: currency_ids } }).populate('currency').exec()
+        let currencies
+        if(ctp_group === 'CTP50') {
+            currencies  = await Currency.find({ ctp_group: { $in: ['CTP10', 'CTP50'] } })
         } else {
-            currencies_stats = await Stats.find({ batch: batch._id }).populate('currency').exec()
+            currencies  = await Currency.find({ ctp_group })
         }
+        const currency_ids = currencies.map((currency) => {return currency._id})
+            currencies_stats = await Stats.find({ batch: batch._id, currency: { $in: currency_ids } }).populate('currency').exec()
         let total_freefloat = 0;
         currencies_stats.map(currency => {
             total_freefloat += Number(currency.ff_mcap)

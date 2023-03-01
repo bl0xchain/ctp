@@ -11,6 +11,17 @@ const createCurrency = async(currencyData, token) => {
     return response.data
 }
 
+const updateCurrency = async(currencyData, id, token) => {
+    const response = await axios.put(API_URL+'/'+id, currencyData, getConfig(token))
+    return response.data
+}
+
+const deleteCurrency = async(id, token) => {
+    console.log(id)
+    const response = await axios.delete(API_URL+'/'+id, getConfig(token))
+    return response.data
+}
+
 const getConfig = (token) => {
     return {
         headers: {
@@ -21,7 +32,9 @@ const getConfig = (token) => {
 
 const currencyService = {
     getCurrencies,
-    createCurrency
+    createCurrency,
+    updateCurrency,
+    deleteCurrency
 }
 
 export default currencyService;

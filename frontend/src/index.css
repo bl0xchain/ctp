@@ -263,3 +263,8 @@ h1, h2, h3, h4, h5, h6 {
 .btn.nav-link:focus, .btn.nav-link:hover {
   color: var(--bs-btn-hover-color) !important;
 }
+
+.currency-action:hover {
+  cursor: pointer;
+  color: #0d6efd;
+}
