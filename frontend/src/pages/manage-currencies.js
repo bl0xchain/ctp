@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Button, Col, Container, Form, Row, Table } from "react-bootstrap"
+import { Alert, Button, Col, Container, Form, Row, Table } from "react-bootstrap"
 import Header from "../components/Header"
 import currencyService from "../features/currency/currencyService"
 import { useSelector } from "react-redux"
@@ -21,6 +21,8 @@ const ManageCurrencies = () => {
     const [editShow, setEditShow] = useState(false)
     const [deleteShow, setDeleteShow] = useState(false)
     const [activeCurrency, setActiveCurrency] = useState(null)
+    const [ctp10Count, setCtp10Count] = useState(11)
+    const [ctp50Count, setCtp50Count] = useState(40)
 
     const { user } = useSelector((state) => state.auth)
 
@@ -48,7 +50,18 @@ const ManageCurrencies = () => {
         setDeleteShow(false)
         const currencies = await currencyService.getCurrencies()
         setData(currencies)
-
+        let ctp10 = 0;
+        let ctp50 = 0;
+        currencies.forEach((currency) => {
+            if(currency.ctp_group === 'CTP10') {
+                ctp10++;
+                // ctp50++;
+            } else if(currency.ctp_group === 'CTP50') {
+                ctp50++;
+            }
+        })
+        setCtp10Count(ctp10)
+        setCtp50Count(ctp50)
     }
 
     useEffect(() => {
@@ -70,6 +83,18 @@ const ManageCurrencies = () => {
             <Header />
             <Container className="py-5" style={{ minHeight: "calc(100vh - 221px)" }}>
                 <h2 className="mb-4">Manage Currencies</h2>
+                {
+                    ctp10Count !== 10 &&
+                    <Alert variant='danger'>
+                        There should be 10 currencies belongs to group CTP10. But currently there are {ctp10Count} currencies in CTP10!
+                    </Alert>
+                }
+                {
+                    ctp50Count !== 40 &&
+                    <Alert variant='danger'>
+                        There should be 40 currencies belongs to group CTP50. But currently there are {ctp50Count} currencies in CTP50!
+                    </Alert>
+                }
                 {
                     !user ?
                     <Login /> :
