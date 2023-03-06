@@ -7,8 +7,8 @@ const Footer = () => {
             <Container>
                 
                 <Row>
-                    <Col md="6">
-                        <Nav className="">
+                    <Col xxl="6">
+                        <Nav className="justify-content-center justify-content-xxl-start">
                             <Nav.Item>
                                 <Link to="/" className="nav-link text-light ps-0">Home</Link>
                             </Nav.Item>
@@ -26,8 +26,8 @@ const Footer = () => {
                             </Nav.Item>                    
                         </Nav>
                     </Col>
-                    <Col md="6">
-                        <p className="text-end mt-2 mb-0">
+                    <Col xxl="6">
+                        <p className="text-center text-xxl-end mt-4 mt-xxl-2 mb-0">
                             © {(new Date().getFullYear())} CTP Index. All Rights Reserved.
                         </p>
                     </Col>

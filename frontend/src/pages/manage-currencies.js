@@ -128,6 +128,8 @@ const ManageCurrencies = () => {
                                                             <option value="">Select CTP Group</option>
                                                             <option value="CTP10">CTP10</option>
                                                             <option value="CTP50">CTP50</option>
+                                                            <option value="Extra">Extra</option>
+                                                            <option value="Archived">Archived</option>
                                                         </Form.Select>
                                                     </Col>
                                                 </Row>  

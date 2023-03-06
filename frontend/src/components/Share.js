@@ -6,7 +6,7 @@ import { EmailIcon, EmailShareButton, TelegramIcon, TelegramShareButton, Twitter
 const Share = (props) => {
     const [open, setOpen] = useState(false);
     return (
-        <div className="spad-share float-start d-flex mt-4">
+        <div className="spad-share d-flex mt-4">
             <Button variant="light"
                 onClick={() => setOpen(!open)}
                 aria-controls="share-collapse-icons"

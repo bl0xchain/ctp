@@ -48,8 +48,15 @@ const deleteCurrency = asyncHandler(async (req, res) => {
         res.status(400)
         throw new Error('Currency not found')
     }
+    if(currency.status === 'Archived') {
+        res.status(400)
+        throw new Error('Currency is already Archived')
+    }
 
-    await currency.remove()
+    const updatedCurrency = await Currency.findByIdAndUpdate(req.params.id, {
+        ctp_group: 'Archived'
+    })
+    // await currency.remove()
 
     res.status(200).json({ id: req.params.id });
 })

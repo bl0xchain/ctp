@@ -362,7 +362,8 @@ const refreshCurrencyStats = asyncHandler( async (req, res) => {
                     low_24h: currency.low_24h,
                     price_change_percentage_24h: currency.price_change_percentage_24h,
                     ath: currency.ath,
-                    atl: currency.atl
+                    atl: currency.atl,
+                    ctp_group: currencyMapping[currency.id].ctp_group
                 })
             })
             const stats = await Stats.create(data)

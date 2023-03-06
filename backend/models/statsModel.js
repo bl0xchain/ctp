@@ -52,7 +52,10 @@ const statsSchema = mongoose.Schema({
     },
     atl: {
         type: Number
-    }
+    },
+    ctp_group: {
+        type: String,
+    },
 })
 
 module.exports = mongoose.model('Stats', statsSchema)

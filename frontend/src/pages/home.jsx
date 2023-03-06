@@ -10,6 +10,8 @@ import Share from "../components/Share";
 import StatsChart from "../components/StatsChart";
 import StatsPieChart from "../components/StatsPieChart";
 import Header from "../components/Header";
+import CurrencyPortfolio from "../components/CurrencyPortfolio";
+import ReturnsComp from "../components/ReturnsComp";
 
 const Home = () => {
     const [ctpGroup, setCtpGroup] = useState('CTP10')
@@ -128,13 +130,14 @@ const Home = () => {
 
     return (
         <>
+        {/* <Header /> */}
         <Header />
         <div className="mb-5">
             <Container style={{minHeight: '400px'}}>
             {
                 batch &&
                 <Row className="pt-5 pb-5 align-items-center">
-                    <Col md="4">
+                    <Col md="4" className="text-center text-md-start mb-5">
                         
                         <h3 className="">index value</h3>
                         <h2 className="main-index ff-satoshi-black mb-4">
@@ -162,7 +165,7 @@ const Home = () => {
                             </p>
                             <p className="text-secondary d-inline-block">24 hrs</p>
                         </div>
-                        {/* <OverlayTrigger
+                        <OverlayTrigger
                             overlay={
                                 <Tooltip id="button-tooltip">
                                     Coming Soon
@@ -170,9 +173,9 @@ const Home = () => {
                             }
                         >
                             <Button className="fw-bold" size="lg">BUY CTP</Button>
-                        </OverlayTrigger> */}
-                        <Link to="/buy" className="btn btn-primary btn-lg">BUY CTP10</Link>
-                        <div className="mt-3">
+                        </OverlayTrigger>
+                        {/* <Link to="/buy" className="btn btn-primary btn-lg">BUY CTP10</Link> */}
+                        <div className="my-3 ">
                             <Share />
                         </div>
                     </Col>
@@ -238,7 +241,7 @@ const Home = () => {
                     <Col md="6">
                         <h2 className="mb-4">Documents</h2>
                         <ul className="list-inline">
-                            <li className="list-inline-item">
+                            <li className="list-inline-item mb-3">
                                 <OverlayTrigger
                                     overlay={
                                         <Tooltip id="button-tooltip1">
@@ -251,7 +254,7 @@ const Home = () => {
                                     </Button>
                                 </OverlayTrigger>
                             </li>
-                            <li className="list-inline-item">
+                            <li className="list-inline-item mb-3">
                                 <OverlayTrigger
                                     overlay={
                                         <Tooltip id="button-tooltip2">
@@ -265,7 +268,7 @@ const Home = () => {
                                 </OverlayTrigger>
                                 
                             </li>
-                            <li className="list-inline-item">
+                            <li className="list-inline-item mb-3">
                                 <OverlayTrigger
                                     overlay={
                                         <Tooltip id="button-tooltip3">
@@ -284,14 +287,14 @@ const Home = () => {
             </Container>
         </div>
         <div>
-            <Returns ctpStats={ctpStats} ctpStatsLoading={ctpStatsLoading} />
+            <ReturnsComp ctpStats={ctpStats} ctpStatsLoading={ctpStatsLoading} />
         </div>
         <div className="bg-light text-center">
             <Container className="pt-5 pb-5">
             {
                 currencyStats &&
                 <Row className="mb-5">
-                    <Col sm="6" style={{height: '350px'}}>
+                    <Col sm="6" style={{height: '350px'}} className="mb-5 mb-md-0">
                         <h4>CTP COMPOSITION</h4>
                         {
                             ctpComposition &&
@@ -308,70 +311,10 @@ const Home = () => {
                     </Col>
                 </Row>
             }
-                {/* <div className="mt-5">
-                    <Button size="lg" disabled className="rounded-pill">
-                        Buy CTP Index
-                    </Button>
-                    <p>Coming Soon</p>
-                </div> */}
             </Container>
         </div>
+        <CurrencyPortfolio currencies={currencyStats} />
         <Container className="pt-5 pb-5">
-            <h2 className="mb-4">Portfolio Construction</h2>
-            {
-                currencyStats &&
-                <Table responsive className="ctp-stats-table mb-5 text-center">
-                    <thead>
-                        <tr>
-                            <th className="text-start">Currency Name</th>
-                            <th>Classification</th>
-                            <th>weight</th>
-                            <th>Market Cap</th>
-                            <th>Price</th>
-                            <th className="text-end">Price Change</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        currencyStats.map(currency => (
-                            <tr key={currency.id}>
-                                <td className="text-start">
-                                    <Link to={"/currency/"+currency.id}>
-                                        <img alt="logo" className="currency-logo" src={currency.image} width="25"/> {" "}
-                                        <span className="currency-name">{currency.name}</span> {" "}
-                                        <small className="text-muted text-uppercase">{currency.symbol}</small>
-                                    </Link>
-                                </td>
-                                <td>
-                                    <span className={"currency-type-tag "+ currency.category}>{currency.category}</span>
-                                </td>
-                                <td>
-                                    <NumericFormat value={currency.weight} displayType={'text'}
-                                        thousandSeparator={true} decimalScale="2"
-                                        decimalSeparator="." suffix={'%'} />
-                                </td>
-                                <td>
-                                    <NumericFormat value={currency.market_cap} displayType={'text'}
-                                        thousandSeparator={true} prefix={'$'} decimalScale="2"
-                                        decimalSeparator="."/>
-                                </td>
-                                <td>
-                                    <NumericFormat value={currency.price} displayType={'text'}
-                                        thousandSeparator={true} prefix={'$'} decimalScale="2"
-                                        decimalSeparator="."/>
-                                </td>
-                                <td className="text-end">
-                                    <NumericFormat
-                                        className={currency.price_change_24h > 0 ? 'text-success' : 'text-danger'}
-                                        value={currency.price_change_24h} displayType={'text'}
-                                        decimalScale="2" decimalSeparator="." suffix={'%'}/>
-                                </td>
-                            </tr>
-                        ))
-                    }
-                    </tbody>
-                </Table>
-            }
             <Row className="mt-0">
                 <Col className="text-start">
                     Updated on : {" "}

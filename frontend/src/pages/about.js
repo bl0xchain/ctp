@@ -15,10 +15,10 @@ const About = () => {
             <Container className="py-5">
                 <h1 className="text-center">What is CTP Index</h1>
                 <Row>
-                    <Col>
+                    <Col md="6">
                         <img className="img-fluid" src={ctpImage} alt="" />
                     </Col>
-                    <Col>
+                    <Col md="6">
                         <div className="mt-5">
                         A CTP Index is a type of investment vehicle that allows investors to gain exposure to a diversified portfolio of cryptocurrencies. The fund is constructed using a set of rules and criteria that determine the selection and weighting of the cryptocurrencies that make up the fund.
                         </div>
