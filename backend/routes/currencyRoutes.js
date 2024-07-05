@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { getCurrencies, addCurrency, deleteCurrency, updateCurrency } = require('../controllers/currencyController')
-const { getCurrencyStatsByGroup, getCurrencyStatsByCurrency, getCurrencyStatsHistory, refreshCurrencyStats, getCTPStatsHistory, getCTPStatsHistoryNew, getCTPStatsReturns, getCurrencyStats } = require('../controllers/statsController')
+const { getCurrencyStatsByGroup, getCurrencyStatsByCurrency, getCurrencyStatsHistory, refreshCurrencyStats, getCTPStatsHistory, getCTPStatsHistoryNew, getCTPStatsReturns, getCurrencyStats, getCTPData } = require('../controllers/statsController')
 const { adminOnly } = require('../middleware/authMiddleware')
 
 // router.route("/").get(getCurrencies).post(addCurrency)
@@ -18,5 +18,6 @@ router.route("/refresh-stats").get(refreshCurrencyStats)
 router.route("/ctp-stats").get(getCTPStatsHistory)
 router.route("/ctp-stats-new").get(getCTPStatsHistoryNew)
 router.route("/ctp-returns").get(getCTPStatsReturns)
+router.route("/ctp-data").get(getCTPData)
 
 module.exports = router

@@ -15,7 +15,7 @@ function App() {
     return (
         <>
             <Router>
-                <div className="ctp-index">
+                <div className="ctp-index max-w-7xl mx-auto px-4">
                     <Routes>
                         <Route path='/' element={<Home />} />
                         <Route path='/about' element={<About />} />
